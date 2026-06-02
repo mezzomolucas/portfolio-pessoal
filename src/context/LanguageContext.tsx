@@ -72,8 +72,19 @@ const translations: Record<string, Record<Language, string>> = {
   'project1.highlight4': { pt: 'Dashboard Inteligente: Gráficos dinâmicos de fluxo de caixa.', en: 'Smart Dashboard: Dynamic cash flow charts.' },
   'project1.highlight5': { pt: 'Stack Moderna: React.js, TypeScript, Tailwind CSS, Supabase.', en: 'Modern Stack: React.js, TypeScript, Tailwind CSS, Supabase.' },
 
-  'project2.desc': { pt: 'Interface de chat minimalista integrada com LLMs via WebSocket.', en: 'Minimalist chat interface integrated with LLMs via WebSocket.' },
-  'project3.desc': { pt: 'Loja virtual de alta performance utilizando arquitetura headless.', en: 'High-performance online store using headless architecture.' },
+  'project2.desc': { pt: 'Site institucional para a marca Ozark Viking com design temático e moderno.', en: 'Institutional website for the Ozark Viking brand with a themed and modern design.' },
+  'project2.challenge': { pt: 'Criar uma identidade visual forte e coesa para uma marca com temática nórdica, garantindo performance e responsividade em todos os dispositivos.', en: 'Creating a strong and cohesive visual identity for a Nordic-themed brand, ensuring performance and responsiveness across all devices.' },
+  'project2.solution': { pt: 'Desenvolvido com React e Tailwind, o site traduz a identidade da marca em uma experiência visual imersiva, com animações, tipografia personalizada e design responsivo.', en: 'Built with React and Tailwind, the site translates the brand identity into an immersive visual experience, with animations, custom typography, and responsive design.' },
+  'project2.highlight1': { pt: 'Design temático nórdico com paleta de cores e tipografia customizadas.', en: 'Nordic themed design with custom color palette and typography.' },
+  'project2.highlight2': { pt: 'Animações fluidas para uma experiência imersiva ao usuário.', en: 'Fluid animations for an immersive user experience.' },
+  'project2.highlight3': { pt: 'Layout totalmente responsivo, otimizado para mobile e desktop.', en: 'Fully responsive layout, optimized for mobile and desktop.' },
+
+  'project3.desc': { pt: 'Site institucional para o negócio Dona Ferreirinha, com foco em presença digital local.', en: 'Institutional website for the Dona Ferreirinha business, focused on local digital presence.' },
+  'project3.challenge': { pt: 'Levar um negócio local para o ambiente digital com um site profissional, atrativo e de fácil navegação para o público-alvo.', en: 'Bringing a local business to the digital environment with a professional, attractive, and easy-to-navigate website for the target audience.' },
+  'project3.solution': { pt: 'Criado um site institucional com React e Tailwind, destacando os produtos e serviços da marca com design limpo e acessível, priorizando a conversão e o contato direto com o cliente.', en: 'An institutional website was created with React and Tailwind, highlighting the brand\'s products and services with a clean and accessible design, prioritizing conversion and direct customer contact.' },
+  'project3.highlight1': { pt: 'Design limpo e acessível voltado ao público local.', en: 'Clean and accessible design for the local audience.' },
+  'project3.highlight2': { pt: 'Seções de produtos e serviços com apresentação visual atrativa.', en: 'Product and service sections with attractive visual presentation.' },
+  'project3.highlight3': { pt: 'Integração com canais de contato direto (WhatsApp, Instagram).', en: 'Integration with direct contact channels (WhatsApp, Instagram).' },
 
   // Contact
   'contact.title': { pt: 'Vamos construir algo incrível?', en: 'Let\'s build something amazing?' },

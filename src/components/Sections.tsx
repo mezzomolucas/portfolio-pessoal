@@ -307,24 +307,32 @@ const PortfolioPage = () => {
       link: "https://hotel-finance-os.vercel.app/login"
     },
     {
-      title: "AI Chat Interface",
+      title: "Ozark Viking",
       shortDesc: t('project2.desc'),
       role: "Frontend Developer",
-      challenge: "Creating a responsive and low-latency chat interface for AI interactions.",
-      solution: "Implemented WebSocket connection for real-time streaming responses.",
-      highlights: ["Real-time Streaming", "Markdown Support", "History Management"],
-      tags: ["Next.js", "OpenAI", "Socket.io"],
-      link: "#"
+      challenge: t('project2.challenge'),
+      solution: t('project2.solution'),
+      highlights: [
+        t('project2.highlight1'),
+        t('project2.highlight2'),
+        t('project2.highlight3'),
+      ],
+      tags: ["React", "TypeScript", "Tailwind"],
+      link: "https://ozark-viking-website.vercel.app/"
     },
     {
-      title: "E-commerce Headless",
+      title: "Dona Ferreirinha",
       shortDesc: t('project3.desc'),
-      role: "Full Stack Developer",
-      challenge: "Building a highly customizable e-commerce frontend decoupled from the backend.",
-      solution: "Used Shopify Storefront API with Remix for a fast, dynamic frontend.",
-      highlights: ["Headless Architecture", "Custom Cart Logic", "SEO Optimized"],
-      tags: ["Shopify", "Remix", "Tailwind"],
-      link: "#"
+      role: "Frontend Developer",
+      challenge: t('project3.challenge'),
+      solution: t('project3.solution'),
+      highlights: [
+        t('project3.highlight1'),
+        t('project3.highlight2'),
+        t('project3.highlight3'),
+      ],
+      tags: ["React", "TypeScript", "Tailwind"],
+      link: "https://dona-ferreirinha-website.vercel.app/"
     }
   ];
 
