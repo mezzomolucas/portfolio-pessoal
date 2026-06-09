@@ -333,6 +333,20 @@ const PortfolioPage = () => {
       ],
       tags: ["React", "TypeScript", "Tailwind"],
       link: "https://dona-ferreirinha-website.vercel.app/"
+    },
+    {
+      title: "Marta Gonçalves",
+      shortDesc: t('project4.desc'),
+      role: "Frontend Developer",
+      challenge: t('project4.challenge'),
+      solution: t('project4.solution'),
+      highlights: [
+        t('project4.highlight1'),
+        t('project4.highlight2'),
+        t('project4.highlight3'),
+      ],
+      tags: ["Next.js", "React", "TypeScript", "Tailwind"],
+      link: "https://marta-goncalves-website.vercel.app/"
     }
   ];
 

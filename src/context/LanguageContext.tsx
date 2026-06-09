@@ -86,6 +86,13 @@ const translations: Record<string, Record<Language, string>> = {
   'project3.highlight2': { pt: 'Seções de produtos e serviços com apresentação visual atrativa.', en: 'Product and service sections with attractive visual presentation.' },
   'project3.highlight3': { pt: 'Integração com canais de contato direto (WhatsApp, Instagram).', en: 'Integration with direct contact channels (WhatsApp, Instagram).' },
 
+  'project4.desc': { pt: 'Site institucional para fisioterapeuta em Faro, Portugal, com design profissional e bilíngue.', en: 'Institutional website for a physiotherapist in Faro, Portugal, with a professional bilingual design.' },
+  'project4.challenge': { pt: 'Criar uma presença digital profissional para uma fisioterapeuta que transmitisse confiança aos pacientes e facilitasse o agendamento de consultas.', en: 'Creating a professional digital presence for a physiotherapist that conveyed trust to patients and facilitated appointment booking.' },
+  'project4.solution': { pt: 'Desenvolvido com Next.js e Tailwind, o site apresenta as especialidades, depoimentos de pacientes e múltiplos canais de contato, com suporte bilíngue e design responsivo voltado à conversão.', en: 'Built with Next.js and Tailwind, the site presents specialties, patient testimonials, and multiple contact channels, with bilingual support and a conversion-focused responsive design.' },
+  'project4.highlight1': { pt: 'Design limpo e profissional que transmite credibilidade e cuidado ao paciente.', en: 'Clean and professional design that conveys credibility and patient care.' },
+  'project4.highlight2': { pt: 'Suporte a dois idiomas (Português e Inglês) para alcance ampliado.', en: 'Bilingual support (Portuguese and English) for broader reach.' },
+  'project4.highlight3': { pt: 'Integração com múltiplos canais de contato: WhatsApp, email e telefone.', en: 'Integration with multiple contact channels: WhatsApp, email, and phone.' },
+
   // Contact
   'contact.title': { pt: 'Vamos construir algo incrível?', en: 'Let\'s build something amazing?' },
   'contact.desc': { pt: 'Tem uma ideia ou um negócio que precisa de um site profissional? Vamos conversar e tirar seu projeto do papel.', en: 'Do you have an idea or a business that needs a professional website? Let\'s talk and get your project off the ground.' },
