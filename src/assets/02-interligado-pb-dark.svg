@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 100" width="680" height="200">
+  <defs></defs>
+  <g fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 14 V86 H50" stroke="#ffffff"></path>
+    <path d="M42 86 V28 L58 52 L74 28 V86" stroke="#ffffff"></path>
+  </g>
+  <line x1="90" y1="24" x2="90" y2="76" stroke="#ffffff" stroke-width="1.5"></line>
+  <text x="104" y="52" font-family="'Space Grotesk', sans-serif" font-weight="500" font-size="20" fill="#ffffff">Lucas Mezzomo</text>
+  <text x="105" y="68" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="8.5" letter-spacing="3.5" fill="#9aa1ab">DEVELOPER</text>
+</svg>

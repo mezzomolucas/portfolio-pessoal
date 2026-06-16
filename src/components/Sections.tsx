@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import fotoLucas from '../assets/foto-lucas.jpeg';
+import logoDark from '../assets/02-interligado-pb-dark.svg';
+import logoLight from '../assets/02-interligado-pb-light.svg';
 import TextType from './TextType';
 
 // ─── Mobile hook ──────────────────────────────────────────────────────────────
@@ -424,6 +426,11 @@ const PortfolioPage = () => {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', overflow: 'hidden', padding: '1.5rem', textAlign: 'center' }}>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <img
+            src={isDark ? logoDark : logoLight}
+            alt="Lucas Mezzomo"
+            style={{ width: isMobile ? '160px' : '220px', marginBottom: '2.5rem', opacity: 0.9 }}
+          />
           <p style={{ ...meta, marginBottom: '2.5rem' }}>{t('nav.contact')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', alignItems: 'center' }}>
             {contacts.map(({ label, href, Icon }) => (
@@ -572,6 +579,12 @@ const PortfolioPage = () => {
                 ← back
               </button>
               <div style={{ marginBottom: '2.75rem' }}>
+                <svg viewBox="0 0 100 100" style={{ width: '26px', height: '26px', display: 'block', marginBottom: '0.6rem' }}>
+                  <g fill="none" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 12 V88 H46" stroke={c.text} />
+                    <path d="M38 88 V26 L56 53 L74 26 V88" stroke={c.text} />
+                  </g>
+                </svg>
                 <p style={{ fontSize: '0.875rem', fontWeight: 300, color: c.text, letterSpacing: '-0.01em' }}>Lucas Mezzomo</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.3em', marginTop: '0.25rem' }}>
                   <span style={{ ...meta }}>Dev.</span>
@@ -605,7 +618,15 @@ const PortfolioPage = () => {
           {/* Mobile top bar */}
           <div style={{ position: 'fixed', top: fi, left: fi, right: fi, height: '44px', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${c.border}`, padding: '0 1.1rem' }}>
             <button onClick={() => navigate('/')} style={{ ...meta, ...btnBase, opacity: 0.55 }}>← back</button>
-            <span style={{ fontSize: '0.75rem', fontWeight: 300, color: c.text, letterSpacing: '-0.01em' }}>Lucas Mezzomo</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 300, color: c.text, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <svg viewBox="0 0 100 100" style={{ width: '16px', height: '16px', flexShrink: 0 }}>
+                <g fill="none" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 12 V88 H46" stroke={c.text} />
+                  <path d="M38 88 V26 L56 53 L74 26 V88" stroke={c.text} />
+                </g>
+              </svg>
+              Lucas Mezzomo
+            </span>
             <button onClick={() => setMenuOpen(m => !m)} style={{ color: c.text, ...btnBase, opacity: 0.7, display: 'flex', alignItems: 'center' }}>
               {menuOpen ? <X size={16} strokeWidth={1.5} /> : <Menu size={16} strokeWidth={1.5} />}
             </button>
