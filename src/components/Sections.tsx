@@ -61,6 +61,7 @@ const RingBackground = ({ isDark }: { isDark: boolean }) => {
 // ─── Project modal ────────────────────────────────────────────────────────────
 
 const ProjectModal = ({ project, onClose, isDark }: { project: any; onClose: () => void; isDark: boolean }) => {
+  const { t }  = useLanguage();
   const bg     = isDark ? '#0a0a0a' : '#fafaf8';
   const text   = isDark ? '#f0f0f0' : '#0a0a0a';
   const muted  = isDark ? 'rgba(240,240,240,0.42)' : 'rgba(10,10,10,0.45)';
@@ -83,14 +84,14 @@ const ProjectModal = ({ project, onClose, isDark }: { project: any; onClose: () 
         <p style={lbl}>{project.role}</p>
         <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.75rem)', fontWeight: 200, letterSpacing: '-0.02em', color: text, lineHeight: 1.1, marginBottom: '2rem' }}>{project.title}</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2rem' }}>
-          {[{ l: 'O Desafio', t: project.challenge }, { l: 'A Solução', t: project.solution }].map(({ l, t: body }) => (
+          {[{ l: t('modal.challenge'), t: project.challenge }, { l: t('modal.solution'), t: project.solution }].map(({ l, t: body }) => (
             <div key={l}>
               <p style={lbl}>{l}</p>
               <p style={{ fontSize: '0.875rem', fontWeight: 300, color: muted, lineHeight: 1.75 }}>{body}</p>
             </div>
           ))}
           <div>
-            <p style={lbl}>Destaques</p>
+            <p style={lbl}>{t('modal.highlights')}</p>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {project.highlights.map((h: string, i: number) => (
                 <li key={i} style={{ fontSize: '0.875rem', fontWeight: 300, color: muted, lineHeight: 1.75, paddingLeft: '1.25rem', position: 'relative' }}>
@@ -109,7 +110,7 @@ const ProjectModal = ({ project, onClose, isDark }: { project: any; onClose: () 
           {project.link && (
             <a href={project.link} target="_blank" rel="noopener noreferrer"
               style={{ fontSize: '0.68rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: text, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
-              Ver Projeto <ExternalLink size={11} />
+              {t('modal.viewProject')} <ExternalLink size={11} />
             </a>
           )}
         </div>
@@ -472,11 +473,12 @@ const PortfolioPage = () => {
   const NavBottom = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       <div style={{ borderTop: `1px solid ${c.border}`, paddingTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-        <button onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')}
+        <button
+          onClick={() => setLanguage(language === 'pt' ? 'en' : language === 'en' ? 'es' : 'pt')}
           style={{ ...meta, ...btnBase, textAlign: 'left', opacity: 0.4 }}
           onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '1')}
           onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '0.4')}>
-          {language === 'pt' ? 'PT → EN' : 'EN → PT'}
+          {language === 'pt' ? 'PT → EN' : language === 'en' ? 'EN → ES' : 'ES → PT'}
         </button>
         <button onClick={toggleTheme}
           style={{ ...meta, ...btnBase, textAlign: 'left', opacity: 0.4 }}
@@ -532,7 +534,7 @@ const PortfolioPage = () => {
           >
             <Check size={11} style={{ color: c.accent, flexShrink: 0 }} />
             <span style={{ fontSize: '0.65rem', letterSpacing: '0.07em', textTransform: 'uppercase', color: c.text }}>
-              Copiado! aguardo seu email.
+              {t('contact.copied')}
             </span>
           </motion.div>
         )}
