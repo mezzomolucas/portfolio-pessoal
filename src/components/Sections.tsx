@@ -300,12 +300,9 @@ const PortfolioPage = () => {
           <h1 style={{ fontSize: 'clamp(2.2rem, 9vw, 3rem)', fontWeight: 200, letterSpacing: '-0.03em', color: c.text, lineHeight: 0.92, marginBottom: '0.65rem' }}>
             Lucas<br />Mezzomo
           </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35em', marginBottom: '1rem' }}>
-            <span style={{ ...meta }}>Desenvolvedor</span>
-            <span style={{ ...meta, color: c.accent }}>
-              <TextType text={roles} typingSpeed={65} deletingSpeed={38} pauseDuration={2000} showCursor cursorCharacter="_" textColors={[c.accent]} />
-            </span>
-          </div>
+          <p style={{ ...meta, marginBottom: '1rem' }}>
+            Desenvolvedor <span style={{ color: c.accent }}>web</span>
+          </p>
           <p style={{ fontSize: '0.78rem', fontWeight: 300, color: c.muted, lineHeight: 1.75, marginBottom: '1.1rem' }}>{t('about.desc1')}</p>
           <button onClick={handleCopyEmail}
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.62rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: c.muted, background: 'none', border: `1px solid ${c.border}`, padding: '0.32rem 0.65rem', cursor: 'pointer' }}>
@@ -328,13 +325,9 @@ const PortfolioPage = () => {
           <h1 style={{ fontSize: 'clamp(2.6rem, 5.5vw, 5.5rem)', fontWeight: 200, letterSpacing: '-0.03em', color: c.text, lineHeight: 0.92, marginBottom: '1rem' }}>
             Lucas<br />Mezzomo
           </h1>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.4em', marginBottom: '1.75rem' }}>
-            <span style={{ ...meta }}>Desenvolvedor</span>
-            <span style={{ ...meta, color: c.accent }}>
-              <TextType text={roles} typingSpeed={65} deletingSpeed={38} pauseDuration={2000} showCursor cursorCharacter="_" textColors={[c.accent]} />
-            </span>
-            <span style={{ ...meta }}>&nbsp;·&nbsp; Lajeado, RS</span>
-          </div>
+          <p style={{ ...meta, marginBottom: '1.75rem' }}>
+            Desenvolvedor <span style={{ color: c.accent }}>web</span> &nbsp;·&nbsp; Lajeado, RS
+          </p>
           <div style={{ maxWidth: '38ch', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginLeft: 'auto' }}>
             <p style={{ fontSize: '0.8rem', fontWeight: 300, color: c.muted, lineHeight: 1.8 }}>{t('about.desc1')}</p>
             <p style={{ fontSize: '0.8rem', fontWeight: 300, color: c.muted, lineHeight: 1.8 }}>{t('about.desc2')}</p>
@@ -447,12 +440,13 @@ const PortfolioPage = () => {
     );
   };
 
+  // Chamadas diretas (não JSX components) para evitar remount quando o estado do pai muda
   const pages: Record<string, React.ReactNode> = {
-    home:       <PageHome />,
-    experience: <PageExperience />,
-    skills:     <PageSkills />,
-    projects:   <PageProjects />,
-    contact:    <PageContact />,
+    home:       PageHome(),
+    experience: PageExperience(),
+    skills:     PageSkills(),
+    projects:   PageProjects(),
+    contact:    PageContact(),
   };
 
   // ── Shared nav items renderer ─────────────────────────────────────────────────
@@ -519,6 +513,30 @@ const PortfolioPage = () => {
 
       {/* Border frame */}
       <div aria-hidden="true" style={{ position: 'fixed', inset: fi, border: `1px solid ${c.border}`, pointerEvents: 'none', zIndex: 9999 }} />
+
+      {/* Toast — email copiado */}
+      <AnimatePresence>
+        {copied && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
+            style={{
+              position: 'fixed', bottom: isMobile ? '1.25rem' : '2rem',
+              right: isMobile ? '1.25rem' : '2rem',
+              zIndex: 500,
+              background: c.bg, border: `1px solid ${c.accent}`,
+              padding: '0.6rem 1rem',
+              display: 'flex', alignItems: 'center', gap: '0.5rem',
+              boxShadow: `0 0 18px rgba(0,201,109,0.12)`,
+            }}
+          >
+            <Check size={11} style={{ color: c.accent, flexShrink: 0 }} />
+            <span style={{ fontSize: '0.65rem', letterSpacing: '0.07em', textTransform: 'uppercase', color: c.text }}>
+              Copiado! aguardo seu email.
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Modal */}
       <AnimatePresence>
