@@ -429,12 +429,23 @@ const PortfolioPage = () => {
           <img
             src={isDark ? logoDark : logoLight}
             alt="Lucas Mezzomo"
-            style={{ width: isMobile ? '200px' : '320px', marginBottom: '2.5rem', opacity: 0.9 }}
+            style={{ width: isMobile ? '200px' : '320px', marginBottom: '3rem', opacity: 0.9, display: 'block' }}
           />
-          <p style={{ ...meta, marginBottom: '2.5rem' }}>{t('nav.contact')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', alignItems: 'center' }}>
-            {contacts.map(({ label, href, Icon }) => (
-              <a key={href} href={href} target={href.startsWith('mailto') ? '_self' : '_blank'} rel="noopener noreferrer"
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem' }}>
+              <p style={{ ...meta }}>{t('nav.contact')}</p>
+              {(() => { const { href, label, Icon: EmailIcon } = contacts[0]; return (
+                <a href={href} target="_self" rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', fontSize: isMobile ? '0.85rem' : 'clamp(0.9rem, 2vw, 1.4rem)', fontWeight: 200, letterSpacing: '-0.01em', color: c.text, textDecoration: 'none', opacity: 0.45, transition: `opacity 0.3s ${ease}, color 0.3s ${ease}` }}
+                  onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = c.accent; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = '0.45'; e.currentTarget.style.color = c.text; }}>
+                  <EmailIcon size={15} strokeWidth={1.5} />
+                  {label}
+                </a>
+              ); })()}
+            </div>
+            {contacts.slice(1).map(({ label, href, Icon }) => (
+              <a key={href} href={href} target="_blank" rel="noopener noreferrer"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', fontSize: isMobile ? '0.85rem' : 'clamp(0.9rem, 2vw, 1.4rem)', fontWeight: 200, letterSpacing: '-0.01em', color: c.text, textDecoration: 'none', opacity: 0.45, transition: `opacity 0.3s ${ease}, color 0.3s ${ease}` }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = c.accent; }}
                 onMouseLeave={e => { e.currentTarget.style.opacity = '0.45'; e.currentTarget.style.color = c.text; }}>
