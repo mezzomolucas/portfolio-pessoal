@@ -10,10 +10,17 @@ interface LanguageContextType {
 
 const translations: Record<string, Record<Language, string>> = {
   // Navbar
-  'nav.about':    { pt: 'Sobre',    en: 'About',    es: 'Sobre'      },
-  'nav.tech':     { pt: 'Skills',   en: 'Skills',   es: 'Skills'     },
-  'nav.projects': { pt: 'Projetos', en: 'Projects', es: 'Proyectos'  },
-  'nav.contact':  { pt: 'Contato',  en: 'Contact',  es: 'Contacto'   },
+  'nav.about':        { pt: 'Sobre',         en: 'About',        es: 'Sobre'         },
+  'nav.tech':         { pt: 'Skills',        en: 'Skills',       es: 'Skills'        },
+  'nav.projects':     { pt: 'Projetos',      en: 'Projects',     es: 'Proyectos'     },
+  'nav.certificates': { pt: 'Certificados',  en: 'Certificates', es: 'Certificados'  },
+  'nav.contact':      { pt: 'Contato',       en: 'Contact',      es: 'Contacto'      },
+
+  // Certificates
+  'cert.1.title':  { pt: 'Certificado 1', en: 'Certificate 1', es: 'Certificado 1' },
+  'cert.2.title':  { pt: 'Certificado 2', en: 'Certificate 2', es: 'Certificado 2' },
+  'cert.open':     { pt: 'Abrir',         en: 'Open',          es: 'Abrir'         },
+  'cert.download': { pt: 'Download',      en: 'Download',      es: 'Descargar'     },
 
   // Hero
   'hero.role': { pt: 'Web Developer', en: 'Web Developer', es: 'Web Developer' },

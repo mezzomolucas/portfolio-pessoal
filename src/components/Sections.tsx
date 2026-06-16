@@ -216,6 +216,7 @@ const PortfolioPage = () => {
 
   const [copied, setCopied]                   = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedCert, setSelectedCert]       = useState<{ title: string; file: string } | null>(null);
   const [activePage, setActivePage]           = useState('home');
   const [menuOpen, setMenuOpen]               = useState(false);
   const projectsRef                           = useRef<HTMLDivElement>(null);
@@ -267,12 +268,18 @@ const PortfolioPage = () => {
   const allTechs   = ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind', 'Bootstrap', 'Vite', 'HTML5', 'CSS3', 'Flutter', 'Node.js', 'Python', 'Java', 'MySQL', 'Supabase', 'Firebase'];
   const softSkills = [t('skills.soft.org'), t('skills.soft.com'), t('skills.soft.prob'), t('skills.soft.learn'), t('skills.soft.team'), t('skills.soft.adapt'), t('skills.soft.empathy'), t('skills.soft.creative')];
 
+  const certs = [
+    { title: t('cert.1.title'), file: '/certificates/cert-1.pdf' },
+    { title: t('cert.2.title'), file: '/certificates/cert-2.pdf' },
+  ];
+
   const navItems = [
-    { id: 'home',       label: 'Home' },
-    { id: 'experience', label: t('experience.title') },
-    { id: 'skills',     label: t('nav.tech') },
-    { id: 'projects',   label: t('nav.projects') },
-    { id: 'contact',    label: t('nav.contact') },
+    { id: 'home',         label: 'Home' },
+    { id: 'experience',   label: t('experience.title') },
+    { id: 'skills',       label: t('nav.tech') },
+    { id: 'projects',     label: t('nav.projects') },
+    { id: 'certificates', label: t('nav.certificates') },
+    { id: 'contact',      label: t('nav.contact') },
   ];
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -416,6 +423,40 @@ const PortfolioPage = () => {
     </div>
   );
 
+  const PageCertificates = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '1.5rem 1.5rem 3rem' : '3rem 3.5rem 3rem 2rem', overflow: 'auto', textAlign: isMobile ? 'left' : 'right' }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}>
+        <p style={{ ...meta, marginBottom: isMobile ? '1.75rem' : '2.5rem' }}>05 — {t('nav.certificates')}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.25rem' }}>
+          {certs.map(cert => (
+            <div
+              key={cert.file}
+              onClick={() => setSelectedCert(cert)}
+              style={{ border: `1px solid ${c.border}`, cursor: 'pointer', transition: `border-color 0.25s`, background: c.bg }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = c.accent)}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = c.border)}
+            >
+              {/* PDF preview */}
+              <div style={{ position: 'relative', height: '200px', overflow: 'hidden', background: isDark ? '#0d0d0d' : '#e8e3d8' }}>
+                <iframe
+                  src={`${cert.file}#toolbar=0&navpanes=0&scrollbar=0`}
+                  title={cert.title}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '400px', border: 'none', pointerEvents: 'none' }}
+                />
+                <div style={{ position: 'absolute', inset: 0 }} />
+              </div>
+              {/* Card footer */}
+              <div style={{ padding: '0.85rem 1rem', borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p style={{ ...meta }}>{cert.title}</p>
+                <span style={{ ...meta, color: c.accent }}>{t('cert.open')} →</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+
   const PageContact = () => {
     const contacts = [
       { label: 'lucas.mezzomo@universo.univates.br', href: 'mailto:lucas.mezzomo@universo.univates.br', Icon: Mail },
@@ -461,11 +502,12 @@ const PortfolioPage = () => {
 
   // Chamadas diretas (não JSX components) para evitar remount quando o estado do pai muda
   const pages: Record<string, React.ReactNode> = {
-    home:       PageHome(),
-    experience: PageExperience(),
-    skills:     PageSkills(),
-    projects:   PageProjects(),
-    contact:    PageContact(),
+    home:         PageHome(),
+    experience:   PageExperience(),
+    skills:       PageSkills(),
+    projects:     PageProjects(),
+    certificates: PageCertificates(),
+    contact:      PageContact(),
   };
 
   // ── Shared nav items renderer ─────────────────────────────────────────────────
@@ -558,9 +600,45 @@ const PortfolioPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Modal */}
+      {/* Modal — projetos */}
       <AnimatePresence>
         {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} isDark={isDark} />}
+      </AnimatePresence>
+
+      {/* Modal — certificados */}
+      <AnimatePresence>
+        {selectedCert && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.92)', display: 'flex', flexDirection: 'column', padding: isMobile ? '1rem' : '1.5rem' }}
+            onClick={() => setSelectedCert(null)}
+          >
+            {/* Header */}
+            <div onClick={e => e.stopPropagation()} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexShrink: 0 }}>
+              <p style={{ fontSize: '0.68rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(240,240,240,0.45)' }}>{selectedCert.title}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                <a
+                  href={selectedCert.file} download
+                  style={{ fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(240,240,240,0.55)', textDecoration: 'none', transition: 'color 0.2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#f0f0f0')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(240,240,240,0.55)')}
+                >
+                  {t('cert.download')}
+                </a>
+                <button onClick={() => setSelectedCert(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(240,240,240,0.55)', fontSize: '1.5rem', lineHeight: 1, padding: 0 }}>×</button>
+              </div>
+            </div>
+            {/* PDF viewer */}
+            <div onClick={e => e.stopPropagation()} style={{ flex: 1, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <iframe
+                src={selectedCert.file}
+                title={selectedCert.title}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+              />
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* ── DESKTOP layout ── */}
