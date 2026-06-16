@@ -429,7 +429,7 @@ const PortfolioPage = () => {
           <img
             src={isDark ? logoDark : logoLight}
             alt="Lucas Mezzomo"
-            style={{ width: isMobile ? '160px' : '220px', marginBottom: '2.5rem', opacity: 0.9 }}
+            style={{ width: isMobile ? '200px' : '320px', marginBottom: '2.5rem', opacity: 0.9 }}
           />
           <p style={{ ...meta, marginBottom: '2.5rem' }}>{t('nav.contact')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', alignItems: 'center' }}>
