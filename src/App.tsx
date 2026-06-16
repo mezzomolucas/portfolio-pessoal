@@ -1,32 +1,30 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import ParticleBackground from './components/ParticleBackground';
 import { Hero, PortfolioPage } from './components/Sections';
 import IntroLoader from './components/IntroLoader';
+import { ThemeProvider } from './context/ThemeContext';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
   const location = useLocation();
 
-  // Only show intro on root path and first load
   useEffect(() => {
-    if (location.pathname !== '/') {
-      setShowIntro(false);
-    }
+    if (location.pathname !== '/') setShowIntro(false);
   }, [location]);
 
+  const isHome = location.pathname === '/';
+
   return (
-    <div className="min-h-screen text-white selection:bg-blue-500 selection:text-white font-sans overflow-x-hidden">
-      {showIntro && location.pathname === '/' && (
-        <IntroLoader onComplete={() => setShowIntro(false)} />
-      )}
-      
-      <ParticleBackground />
-      
-      <Routes>
-        <Route path="/" element={<Hero />} />
-        <Route path="/portfolio" element={<PortfolioPage />} />
-      </Routes>
-    </div>
+    <ThemeProvider>
+      <div className="font-sans overflow-hidden">
+        {showIntro && isHome && (
+          <IntroLoader onComplete={() => setShowIntro(false)} />
+        )}
+        <Routes>
+          <Route path="/" element={<Hero />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+        </Routes>
+      </div>
+    </ThemeProvider>
   );
 }

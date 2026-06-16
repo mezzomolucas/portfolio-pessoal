@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..400;1,14..32,100..400&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -5,20 +6,89 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
+/* ── CSS Custom Properties ──────────────────────────────────────────────── */
+:root {
+  --color-bg: #000000;
+  --color-text: #f0f0f0;
+  --color-muted: rgba(240, 240, 240, 0.4);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-::-webkit-scrollbar-track {
-  background: #020617; /* slate-950 */
+/* ── Grain overlay ──────────────────────────────────────────────────────── */
+@keyframes grain-breathe {
+  0%, 100% { opacity: 0.12; }
+  50%       { opacity: 0.20; }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #334155; /* slate-700 */
-  border-radius: 5px;
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  animation: grain-breathe 8s ease-in-out infinite;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #475569; /* slate-600 */
+.grain-overlay svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
+
+/* ── Viewport border frame ──────────────────────────────────────────────── */
+.viewport-frame {
+  position: fixed;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Nav entrance animation ─────────────────────────────────────────────── */
+@keyframes nav-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.nav-item {
+  animation: nav-in 0.4s var(--ease) both;
+}
+
+/* ── Project hover & clip-path reveal ──────────────────────────────────── */
+.project-entry {
+  cursor: pointer;
+  transition: transform 0.3s var(--ease);
+}
+
+.project-entry:hover {
+  transform: translateX(6px);
+}
+
+.project-meta {
+  opacity: 0.4;
+  transition: opacity 0.3s var(--ease);
+}
+
+.project-entry:hover .project-meta {
+  opacity: 1;
+}
+
+/* ── Ring background ────────────────────────────────────────────────────── */
+@keyframes ring-cw       { to { transform: rotate(360deg);  } }
+@keyframes ring-ccw      { to { transform: rotate(-360deg); } }
+
+.ring-cw      { animation: ring-cw  38s linear infinite; }
+.ring-ccw     { animation: ring-ccw 52s linear infinite; }
+.ring-cw-fast { animation: ring-cw  22s linear infinite; }
+
+/* ── Inner portfolio scrollbar ──────────────────────────────────────────── */
+.portfolio-scroll::-webkit-scrollbar       { width: 2px; }
+.portfolio-scroll::-webkit-scrollbar-track { background: transparent; }
+.portfolio-scroll::-webkit-scrollbar-thumb { background: var(--color-border); }
+
+/* ── Global scrollbar (home / particle page) ────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #020617; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }

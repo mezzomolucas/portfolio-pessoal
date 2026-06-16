@@ -1,604 +1,642 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, Github, Linkedin, Mail, ExternalLink, Code2, ArrowUpRight, Terminal, Cpu, Globe, Database, Layout, Server, ChevronRight, Copy, Check, Brain, Clock, MessageSquare, Zap, BookOpen, Briefcase, Instagram, Puzzle, Users, RefreshCw, Heart, Lightbulb, Target, Rocket, Wrench } from 'lucide-react';
-import { motion } from 'motion/react';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  Mail, ExternalLink,
+  ChevronRight, Copy, Check, Instagram,
+  MessageCircle, Menu, X,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
+import fotoLucas from '../assets/foto-lucas.jpeg';
+import TextType from './TextType';
 
-// --- Reusable Components ---
+// ─── Mobile hook ──────────────────────────────────────────────────────────────
 
-const Card = ({ children, className = "", onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
-  <div 
-    onClick={onClick}
-    className={`bg-[#141414] border border-white/5 rounded-2xl p-6 md:p-8 hover:border-white/10 transition-colors duration-300 ${onClick ? 'cursor-pointer' : ''} ${className}`}
-  >
-    {children}
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return isMobile;
+};
+
+// ─── Grain overlay ────────────────────────────────────────────────────────────
+
+const GrainOverlay = () => (
+  <div className="grain-overlay" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <filter id="p-noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#p-noise)" />
+    </svg>
   </div>
 );
 
-const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType }) => (
-  <div className="flex items-center gap-3 mb-6">
-    {Icon && <Icon className="text-blue-500" size={20} />}
-    <h2 className="text-xl font-medium text-white tracking-wide uppercase text-opacity-90">{title}</h2>
-  </div>
-);
+// ─── Ring background ──────────────────────────────────────────────────────────
 
-const TechItem = ({ name, url }: { name: string; url: string }) => (
-  <div className="flex flex-col items-center gap-2 p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors group">
-    <img src={url} alt={name} className="w-8 h-8 md:w-10 md:h-10 group-hover:scale-110 transition-transform" />
-    <span className="text-xs text-neutral-400 font-mono group-hover:text-white transition-colors text-center">{name}</span>
-  </div>
-);
-
-const SoftSkillItem = ({ icon: Icon, title }: { icon: React.ElementType, title: string }) => (
-  <div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
-    <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
-      <Icon size={18} />
+const RingBackground = ({ isDark }: { isDark: boolean }) => {
+  const dim  = isDark ? 'rgba(0,200,100,0.06)'  : 'rgba(37,99,235,0.06)';
+  const arc  = isDark ? 'rgba(0,200,100,0.28)'  : 'rgba(37,99,235,0.28)';
+  const arc2 = isDark ? 'rgba(0,200,100,0.10)'  : 'rgba(37,99,235,0.10)';
+  return (
+    <div aria-hidden="true" style={{
+      position: 'fixed', inset: 0, zIndex: 1, pointerEvents: 'none', overflow: 'hidden',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      {[88, 62, 38, 18].map(s => (
+        <div key={s} style={{ position: 'absolute', width: `${s}vmin`, height: `${s}vmin`, borderRadius: '50%', border: `1px solid ${dim}` }} />
+      ))}
+      <div className="ring-cw" style={{ position: 'absolute', width: '88vmin', height: '88vmin', borderRadius: '50%', border: '1px solid transparent', borderTopColor: arc, borderRightColor: arc2 }} />
+      <div className="ring-ccw" style={{ position: 'absolute', width: '62vmin', height: '62vmin', borderRadius: '50%', border: '1px solid transparent', borderBottomColor: arc, borderLeftColor: arc2 }} />
+      <div className="ring-cw-fast" style={{ position: 'absolute', width: '38vmin', height: '38vmin', borderRadius: '50%', border: '1px solid transparent', borderTopColor: arc2, borderLeftColor: arc }} />
     </div>
-    <span className="text-sm font-medium text-neutral-300">{title}</span>
-  </div>
-);
+  );
+};
 
-const ProjectModal = ({ project, onClose }: { project: any, onClose: () => void }) => {
-  if (!project) return null;
+// ─── Project modal ────────────────────────────────────────────────────────────
+
+const ProjectModal = ({ project, onClose, isDark }: { project: any; onClose: () => void; isDark: boolean }) => {
+  const bg     = isDark ? '#0a0a0a' : '#fafaf8';
+  const text   = isDark ? '#f0f0f0' : '#0a0a0a';
+  const muted  = isDark ? 'rgba(240,240,240,0.42)' : 'rgba(10,10,10,0.45)';
+  const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const lbl: React.CSSProperties = { fontSize: '0.68rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: muted, marginBottom: '0.5rem' };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-[#141414] border border-white/10 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl"
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
+      style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.25rem', background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(24px)' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        onClick={e => e.stopPropagation()}
+        style={{ background: bg, border: `1px solid ${border}`, width: '100%', maxWidth: '540px', maxHeight: '88vh', overflowY: 'auto', padding: 'clamp(1.5rem, 4vw, 3rem)', position: 'relative' }}
       >
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-white/5 rounded-full text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
-        >
-          <X size={20} />
-        </button>
-
-        <div className="p-6 md:p-8 space-y-6">
+        <button onClick={onClose} style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'none', border: 'none', cursor: 'pointer', color: muted, fontSize: '1.4rem', lineHeight: 1 }}>×</button>
+        <p style={lbl}>{project.role}</p>
+        <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.75rem)', fontWeight: 200, letterSpacing: '-0.02em', color: text, lineHeight: 1.1, marginBottom: '2rem' }}>{project.title}</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2rem' }}>
+          {[{ l: 'O Desafio', t: project.challenge }, { l: 'A Solução', t: project.solution }].map(({ l, t: body }) => (
+            <div key={l}>
+              <p style={lbl}>{l}</p>
+              <p style={{ fontSize: '0.875rem', fontWeight: 300, color: muted, lineHeight: 1.75 }}>{body}</p>
+            </div>
+          ))}
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">{project.title}</h2>
-            <p className="text-blue-400 font-mono text-sm">{project.role}</p>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                <Target size={18} className="text-red-400" /> O Desafio
-              </h3>
-              <p className="text-neutral-400 leading-relaxed">{project.challenge}</p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                <Rocket size={18} className="text-green-400" /> A Solução
-              </h3>
-              <p className="text-neutral-400 leading-relaxed">{project.solution}</p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                <Wrench size={18} className="text-yellow-400" /> Destaques Técnicos
-              </h3>
-              <ul className="space-y-2">
-                {project.highlights.map((highlight: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-2 text-neutral-400">
-                    <span className="mt-1.5 w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0"></span>
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-white/5 flex flex-wrap gap-4 justify-between items-center">
-            <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag: string) => (
-                <span key={tag} className="px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-neutral-400">
-                  #{tag}
-                </span>
+            <p style={lbl}>Destaques</p>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              {project.highlights.map((h: string, i: number) => (
+                <li key={i} style={{ fontSize: '0.875rem', fontWeight: 300, color: muted, lineHeight: 1.75, paddingLeft: '1.25rem', position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: 0, opacity: 0.5 }}>—</span>{h}
+                </li>
               ))}
-            </div>
-            
-            {project.link && (
-              <a 
-                href={project.link} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors"
-              >
-                Ver Projeto <ExternalLink size={18} />
-              </a>
-            )}
+            </ul>
           </div>
+        </div>
+        <div style={{ borderTop: `1px solid ${border}`, paddingTop: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {project.tags.map((tag: string) => (
+              <span key={tag} style={{ fontSize: '0.68rem', letterSpacing: '0.08em', textTransform: 'uppercase', border: `1px solid ${border}`, padding: '0.2rem 0.6rem', color: muted }}>{tag}</span>
+            ))}
+          </div>
+          {project.link && (
+            <a href={project.link} target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: '0.68rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: text, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
+              Ver Projeto <ExternalLink size={11} />
+            </a>
+          )}
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
-// --- Sections ---
-
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const navigate = useNavigate();
-  const { t, language, setLanguage } = useLanguage();
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: t('nav.about'), href: '#about' },
-    { name: t('experience.title'), href: '#experience' },
-    { name: t('nav.tech'), href: '#tech' },
-    { name: t('nav.projects'), href: '#projects' },
-    { name: t('nav.contact'), href: '#contact' },
-  ];
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsOpen(false);
-  };
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'pt' ? 'en' : 'pt');
-  };
-
-  return (
-    <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-20">
-          <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }} className="text-xl font-bold text-white tracking-tighter flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-600 rounded-full animate-pulse"></div>
-            LUCAS MEZZOMO
-          </a>
-          
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
-            
-            <button 
-              onClick={toggleLanguage}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg transition-colors"
-              aria-label="Toggle Language"
-            >
-              {language === 'pt' ? (
-                <>
-                  <img src="https://flagcdn.com/w20/br.png" alt="Brasil" className="w-5 h-auto rounded-sm" />
-                  <span className="text-xs font-mono text-neutral-400">PT</span>
-                </>
-              ) : (
-                <>
-                  <img src="https://flagcdn.com/w20/us.png" alt="USA" className="w-5 h-auto rounded-sm" />
-                  <span className="text-xs font-mono text-neutral-400">EN</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          <div className="md:hidden flex items-center gap-4">
-            <button 
-              onClick={toggleLanguage}
-              className="flex items-center gap-2 px-2 py-1 bg-white/5 border border-white/5 rounded-lg"
-            >
-              {language === 'pt' ? (
-                <img src="https://flagcdn.com/w20/br.png" alt="Brasil" className="w-5 h-auto rounded-sm" />
-              ) : (
-                <img src="https://flagcdn.com/w20/us.png" alt="USA" className="w-5 h-auto rounded-sm" />
-              )}
-            </button>
-            <button onClick={() => setIsOpen(!isOpen)} className="text-neutral-400 hover:text-white">
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-[#141414] border-b border-white/5 px-6 py-4 space-y-4"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="block text-neutral-400 hover:text-white text-sm font-medium"
-            >
-              {link.name}
-            </a>
-          ))}
-        </motion.div>
-      )}
-    </nav>
-  );
-};
+// ─── Hero ─────────────────────────────────────────────────────────────────────
 
 const Hero = () => {
-  const navigate = useNavigate();
-  const { t } = useLanguage();
+  const navigate  = useNavigate();
+  const { t }     = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
+
+  const c = {
+    bg:     isDark ? '#000000'                : '#f0ebe0',
+    text:   isDark ? '#f0f0f0'                : '#0a0a0a',
+    muted:  isDark ? 'rgba(240,240,240,0.38)' : 'rgba(10,10,10,0.40)',
+    border: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)',
+    accent: isDark ? '#00c96d'                : '#2563eb',
+  };
+  const ease = 'cubic-bezier(0.25,0.1,0.25,1)';
+  const meta: React.CSSProperties = { fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.muted };
 
   return (
-    <section id="home" className="h-screen flex flex-col items-center justify-center relative px-4 overflow-hidden">
-      <div className="text-center z-10">
+    <div style={{ position: 'fixed', inset: 0, background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+
+      <RingBackground isDark={isDark} />
+      <GrainOverlay />
+
+      {/* Frame border */}
+      <div aria-hidden="true" style={{ position: 'fixed', inset: '18px', border: `1px solid ${c.border}`, pointerEvents: 'none', zIndex: 9999 }} />
+
+      {/* DARK / LIGHT vertical labels */}
+      <div style={{ position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: 200, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '28px 0', pointerEvents: 'none' }}>
+        {(['DARK', 'LIGHT'] as const).map(lbl => (
+          <button key={lbl} onClick={toggleTheme} style={{
+            writingMode: 'vertical-rl', transform: 'rotate(180deg)',
+            fontSize: '0.58rem', letterSpacing: '0.18em', color: c.text,
+            opacity: (lbl === 'DARK') === isDark ? 0.7 : 0.22,
+            background: 'none', border: 'none', cursor: 'pointer',
+            padding: '0 13px', pointerEvents: 'auto',
+            transition: `opacity 0.3s ${ease}`,
+          }}>{lbl}</button>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 1.5rem' }}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <h1 className="text-6xl md:text-8xl font-bold text-white mb-4 tracking-tighter">
-            Lucas Mezzomo
+          {/* Name */}
+          <h1 style={{
+            fontSize: 'clamp(3rem, 10vw, 7.5rem)', fontWeight: 200,
+            letterSpacing: '-0.04em', color: c.text, lineHeight: 0.9,
+            marginBottom: '1.5rem',
+          }}>
+            Lucas<br />Mezzomo
           </h1>
-          <p className="text-xl md:text-2xl text-blue-500 font-mono tracking-widest uppercase mb-12">
+
+          {/* Role */}
+          <p style={{ ...meta, color: c.accent, marginBottom: '3rem' }}>
             {t('hero.role')}
           </p>
-          
+
+          {/* CTA */}
           <motion.button
             onClick={() => navigate('/portfolio')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group relative px-8 py-4 bg-transparent overflow-hidden rounded-full border border-white/20 hover:border-blue-500/50 transition-colors"
+            whileTap={{ scale: 0.97 }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
+              fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: c.text, background: 'none',
+              border: `1px solid ${c.border}`,
+              padding: '0.75rem 1.75rem', cursor: 'pointer',
+              transition: `border-color 0.3s ${ease}, color 0.3s ${ease}`,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = c.accent; e.currentTarget.style.color = c.accent; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.text; }}
           >
-            <div className="absolute inset-0 w-0 bg-blue-600/10 transition-all duration-[250ms] ease-out group-hover:w-full"></div>
-            <span className="relative flex items-center gap-2 text-white font-medium tracking-wide">
-              {t('hero.cta')} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </span>
+            {t('hero.cta')}
+            <ChevronRight size={14} strokeWidth={1.5} />
           </motion.button>
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 };
 
+// ─── Portfolio Page ───────────────────────────────────────────────────────────
+
 const PortfolioPage = () => {
-  const { t } = useLanguage();
-  const [copied, setCopied] = useState(false);
+  const { t, language, setLanguage } = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
+  const [copied, setCopied]                   = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [activePage, setActivePage]           = useState('home');
+  const [menuOpen, setMenuOpen]               = useState(false);
+  const projectsRef                           = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const roles = ['web', 'criativo', 'freelancer', 'fullstack'];
 
+  // ── Color tokens ─────────────────────────────────────────────────────────────
+  const c = {
+    bg:     isDark ? '#000000'                : '#f0ebe0',
+    text:   isDark ? '#f0f0f0'                : '#0a0a0a',
+    muted:  isDark ? 'rgba(240,240,240,0.38)' : 'rgba(10,10,10,0.40)',
+    border: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)',
+    accent: isDark ? '#00c96d'                : '#2563eb',
+  };
+
+  const cssVars = {
+    '--color-bg': c.bg, '--color-text': c.text,
+    '--color-muted': c.muted, '--color-border': c.border,
+  } as React.CSSProperties;
+
+  // ── Data ──────────────────────────────────────────────────────────────────────
+  const projects = [
+    {
+      title: t('project1.title'), shortDesc: t('project1.shortDesc'), role: t('project1.role'),
+      challenge: t('project1.challenge'), solution: t('project1.solution'),
+      highlights: [t('project1.highlight1'), t('project1.highlight2'), t('project1.highlight3'), t('project1.highlight4'), t('project1.highlight5')],
+      tags: ['React', 'TypeScript', 'Tailwind', 'Supabase'], link: 'https://hotel-finance-os.vercel.app/login',
+    },
+    {
+      title: 'Ozark Viking', shortDesc: t('project2.desc'), role: 'Frontend Developer',
+      challenge: t('project2.challenge'), solution: t('project2.solution'),
+      highlights: [t('project2.highlight1'), t('project2.highlight2'), t('project2.highlight3')],
+      tags: ['React', 'TypeScript', 'Tailwind'], link: 'https://ozark-viking-website.vercel.app/',
+    },
+    {
+      title: 'Dona Ferreirinha', shortDesc: t('project3.desc'), role: 'Frontend Developer',
+      challenge: t('project3.challenge'), solution: t('project3.solution'),
+      highlights: [t('project3.highlight1'), t('project3.highlight2'), t('project3.highlight3')],
+      tags: ['React', 'TypeScript', 'Tailwind'], link: 'https://dona-ferreirinha-website.vercel.app/',
+    },
+    {
+      title: 'Marta Gonçalves', shortDesc: t('project4.desc'), role: 'Frontend Developer',
+      challenge: t('project4.challenge'), solution: t('project4.solution'),
+      highlights: [t('project4.highlight1'), t('project4.highlight2'), t('project4.highlight3')],
+      tags: ['Next.js', 'React', 'TypeScript', 'Tailwind'], link: 'https://marta-goncalves-website.vercel.app/',
+    },
+  ];
+
+  const allTechs   = ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind', 'Bootstrap', 'Vite', 'HTML5', 'CSS3', 'Flutter', 'Node.js', 'Python', 'Java', 'MySQL', 'Supabase', 'Firebase'];
+  const softSkills = [t('skills.soft.org'), t('skills.soft.com'), t('skills.soft.prob'), t('skills.soft.learn'), t('skills.soft.team'), t('skills.soft.adapt'), t('skills.soft.empathy'), t('skills.soft.creative')];
+
+  const navItems = [
+    { id: 'home',       label: 'Home' },
+    { id: 'experience', label: t('experience.title') },
+    { id: 'skills',     label: t('nav.tech') },
+    { id: 'projects',   label: t('nav.projects') },
+    { id: 'contact',    label: t('nav.contact') },
+  ];
+
+  // ── Helpers ───────────────────────────────────────────────────────────────────
   const handleCopyEmail = () => {
     navigator.clipboard.writeText('lucas.mezzomo@universo.univates.br');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const projects = [
-    {
-      title: t('project1.title'),
-      shortDesc: t('project1.shortDesc'),
-      role: t('project1.role'),
-      challenge: t('project1.challenge'),
-      solution: t('project1.solution'),
-      highlights: [
-        t('project1.highlight1'),
-        t('project1.highlight2'),
-        t('project1.highlight3'),
-        t('project1.highlight4'),
-        t('project1.highlight5'),
-      ],
-      tags: ["React", "TypeScript", "Tailwind", "Supabase"],
-      link: "https://hotel-finance-os.vercel.app/login"
-    },
-    {
-      title: "Ozark Viking",
-      shortDesc: t('project2.desc'),
-      role: "Frontend Developer",
-      challenge: t('project2.challenge'),
-      solution: t('project2.solution'),
-      highlights: [
-        t('project2.highlight1'),
-        t('project2.highlight2'),
-        t('project2.highlight3'),
-      ],
-      tags: ["React", "TypeScript", "Tailwind"],
-      link: "https://ozark-viking-website.vercel.app/"
-    },
-    {
-      title: "Dona Ferreirinha",
-      shortDesc: t('project3.desc'),
-      role: "Frontend Developer",
-      challenge: t('project3.challenge'),
-      solution: t('project3.solution'),
-      highlights: [
-        t('project3.highlight1'),
-        t('project3.highlight2'),
-        t('project3.highlight3'),
-      ],
-      tags: ["React", "TypeScript", "Tailwind"],
-      link: "https://dona-ferreirinha-website.vercel.app/"
-    },
-    {
-      title: "Marta Gonçalves",
-      shortDesc: t('project4.desc'),
-      role: "Frontend Developer",
-      challenge: t('project4.challenge'),
-      solution: t('project4.solution'),
-      highlights: [
-        t('project4.highlight1'),
-        t('project4.highlight2'),
-        t('project4.highlight3'),
-      ],
-      tags: ["Next.js", "React", "TypeScript", "Tailwind"],
-      link: "https://marta-goncalves-website.vercel.app/"
-    }
-  ];
+  const go = (id: string) => { setActivePage(id); setMenuOpen(false); };
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0a] relative z-10">
-      <Navbar />
-      
-      {selectedProject && (
-        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
-      )}
-      
-      <div className="container mx-auto px-4 md:px-6 py-10 pt-32 space-y-20">
-        {/* About Section */}
-        <section id="about">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            <div className="md:col-span-4">
-              <Card className="h-full flex flex-col items-center text-center">
-                <div className="w-40 h-40 rounded-full overflow-hidden border-2 border-white/10 mb-6 relative group">
-                  <div className="absolute inset-0 bg-blue-500/10 group-hover:bg-transparent transition-colors"></div>
-                  <img 
-                    src="https://picsum.photos/seed/lucas/400/400" 
-                    alt="Lucas Mezzomo" 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Lucas Mezzomo</h3>
-                <p className="text-blue-400 font-mono text-sm mb-4">{t('about.role')}</p>
-                
-                <button 
-                  onClick={handleCopyEmail}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full text-xs text-neutral-400 hover:text-white hover:bg-white/10 transition-all mb-6 group"
-                >
-                  <Mail size={14} />
-                  <span>lucas.mezzomo@universo.univates.br</span>
-                  {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />}
-                </button>
+  const ease = 'cubic-bezier(0.25,0.1,0.25,1)';
+  const meta: React.CSSProperties = { fontSize: '0.68rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: c.muted };
+  const btnBase: React.CSSProperties = { background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: `opacity 0.25s ${ease}` };
 
-                <div className="flex gap-4">
-                  <a href="https://github.com/mezzomolucas" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-lg text-neutral-400 hover:text-white hover:bg-blue-600 transition-all"><Github size={20} /></a>
-                  <a href="https://www.linkedin.com/in/mezzomolucas/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-lg text-neutral-400 hover:text-white hover:bg-blue-600 transition-all"><Linkedin size={20} /></a>
-                  <a href="mailto:lucas.mezzomo@universo.univates.br" className="p-2 bg-white/5 rounded-lg text-neutral-400 hover:text-white hover:bg-blue-600 transition-all"><Mail size={20} /></a>
-                </div>
-              </Card>
+  // ── Pages ─────────────────────────────────────────────────────────────────────
+
+  const PageHome = () => isMobile ? (
+    /* ── Mobile home: photo top, text below ── */
+    <div style={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}
+        style={{ position: 'relative', height: '38%', flexShrink: 0, overflow: 'hidden' }}>
+        <img src={fotoLucas} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', filter: isDark ? 'grayscale(100%) brightness(0.38) contrast(1.1)' : 'grayscale(40%) brightness(0.8)' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, ${c.bg} 0%, transparent 22%, transparent 60%, ${c.bg} 100%)` }} />
+      </motion.div>
+      <div style={{ flex: 1, padding: '0.75rem 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }}>
+          <h1 style={{ fontSize: 'clamp(2.2rem, 9vw, 3rem)', fontWeight: 200, letterSpacing: '-0.03em', color: c.text, lineHeight: 0.92, marginBottom: '0.65rem' }}>
+            Lucas<br />Mezzomo
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35em', marginBottom: '1rem' }}>
+            <span style={{ ...meta }}>Desenvolvedor</span>
+            <span style={{ ...meta, color: c.accent }}>
+              <TextType text={roles} typingSpeed={65} deletingSpeed={38} pauseDuration={2000} showCursor cursorCharacter="_" textColors={[c.accent]} />
+            </span>
+          </div>
+          <p style={{ fontSize: '0.78rem', fontWeight: 300, color: c.muted, lineHeight: 1.75, marginBottom: '1.1rem' }}>{t('about.desc1')}</p>
+          <button onClick={handleCopyEmail}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.62rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: c.muted, background: 'none', border: `1px solid ${c.border}`, padding: '0.32rem 0.65rem', cursor: 'pointer' }}>
+            <Mail size={10} /> Email {copied ? <Check size={10} /> : <Copy size={10} />}
+          </button>
+        </motion.div>
+      </div>
+    </div>
+  ) : (
+    /* ── Desktop home: photo left, text right ── */
+    <div style={{ position: 'relative', height: '100%', overflow: 'hidden' }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.4, ease: [0.25, 0.1, 0.25, 1] }}
+        style={{ position: 'absolute', left: 0, top: 0, width: '32%', height: '100%', pointerEvents: 'none' }}>
+        <img src={fotoLucas} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', filter: isDark ? 'grayscale(100%) brightness(0.40) contrast(1.1)' : 'grayscale(50%) brightness(0.80) contrast(1.05)' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, transparent 30%, ${c.bg} 100%)` }} />
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, ${c.bg} 0%, transparent 18%, transparent 72%, ${c.bg} 100%)` }} />
+      </motion.div>
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'flex-end', padding: '2rem 3rem 3rem', textAlign: 'right' }}>
+        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}>
+          <h1 style={{ fontSize: 'clamp(2.6rem, 5.5vw, 5.5rem)', fontWeight: 200, letterSpacing: '-0.03em', color: c.text, lineHeight: 0.92, marginBottom: '1rem' }}>
+            Lucas<br />Mezzomo
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.4em', marginBottom: '1.75rem' }}>
+            <span style={{ ...meta }}>Desenvolvedor</span>
+            <span style={{ ...meta, color: c.accent }}>
+              <TextType text={roles} typingSpeed={65} deletingSpeed={38} pauseDuration={2000} showCursor cursorCharacter="_" textColors={[c.accent]} />
+            </span>
+            <span style={{ ...meta }}>&nbsp;·&nbsp; Lajeado, RS</span>
+          </div>
+          <div style={{ maxWidth: '38ch', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginLeft: 'auto' }}>
+            <p style={{ fontSize: '0.8rem', fontWeight: 300, color: c.muted, lineHeight: 1.8 }}>{t('about.desc1')}</p>
+            <p style={{ fontSize: '0.8rem', fontWeight: 300, color: c.muted, lineHeight: 1.8 }}>{t('about.desc2')}</p>
+          </div>
+          <button onClick={handleCopyEmail}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', marginTop: '1.6rem', fontSize: '0.65rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: c.muted, background: 'none', border: `1px solid ${c.border}`, padding: '0.38rem 0.75rem', cursor: 'pointer', transition: `border-color 0.3s ${ease}, color 0.3s ${ease}` }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = c.text; e.currentTarget.style.color = c.text; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted; }}>
+            <Mail size={10} /> lucas.mezzomo@universo.univates.br {copied ? <Check size={10} /> : <Copy size={10} />}
+          </button>
+        </motion.div>
+      </div>
+    </div>
+  );
+
+  const pad = isMobile
+    ? { padding: '1.5rem 1.5rem 2rem', paddingSmall: '1.25rem 1.5rem 1.75rem' }
+    : { padding: '3rem 3.5rem 3rem 2rem', paddingSmall: '2.5rem 3.5rem 2.5rem 2rem' };
+
+  const PageExperience = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: isMobile ? 'flex-start' : 'flex-end', height: '100%', padding: pad.padding, overflow: 'hidden', textAlign: isMobile ? 'left' : 'right' }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }} style={{ width: '100%' }}>
+        <p style={{ ...meta, marginBottom: isMobile ? '1.75rem' : '3rem' }}>02 — {t('experience.title')}</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '2rem' : '3.5rem' }}>
+          {[
+            { role: t('experience.job1.role'), company: t('experience.job1.company'), desc: t('experience.job1.desc') },
+            { role: t('experience.job2.role'), company: t('experience.job2.company'), desc: t('experience.job2.desc') },
+          ].map((job, i) => (
+            <div key={i}>
+              <h2 style={{ fontSize: 'clamp(1.3rem, 4vw, 3rem)', fontWeight: 200, letterSpacing: '-0.02em', color: c.text, lineHeight: 1.05, marginBottom: '0.35rem' }}>{job.role}</h2>
+              <p style={{ ...meta, marginBottom: '0.75rem' }}>{job.company}</p>
+              <p style={{ fontSize: '0.825rem', fontWeight: 300, color: c.muted, lineHeight: 1.75, maxWidth: '46ch', marginLeft: isMobile ? '0' : 'auto' }}>{job.desc}</p>
             </div>
-            <div className="md:col-span-8">
-              <Card className="h-full flex flex-col justify-center">
-                <SectionTitle title={t('about.title')} icon={Terminal} />
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
-                  {t('about.headline').split('soluções digitais')[0]}
-                  <span className="text-blue-500">soluções digitais</span>.
-                </h2>
-                <div className="space-y-4 text-neutral-400 text-lg leading-relaxed">
-                  <p>{t('about.desc1')}</p>
-                  <p>{t('about.desc2')}</p>
-                </div>
-              </Card>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+
+  const PageSkills = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: isMobile ? 'flex-start' : 'flex-end', height: '100%', padding: pad.paddingSmall, overflow: 'hidden', textAlign: isMobile ? 'left' : 'right' }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }} style={{ width: '100%' }}>
+        <p style={{ ...meta, marginBottom: '1.5rem' }}>03 — {t('skills.title')}</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'flex-end', gap: '0.32rem', marginBottom: '1.5rem' }}>
+          {allTechs.map((name, i) => (
+            <motion.span key={name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: i * 0.02 }}
+              style={{ fontSize: '0.62rem', letterSpacing: '0.07em', textTransform: 'uppercase', border: `1px solid ${c.border}`, padding: '0.2rem 0.5rem', color: c.muted }}>
+              {name}
+            </motion.span>
+          ))}
+        </div>
+        <p style={{ ...meta, marginBottom: '0.75rem' }}>{t('skills.soft.title')}</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'flex-end', gap: '0.32rem' }}>
+          {softSkills.map((sk, i) => (
+            <span key={i} style={{ fontSize: '0.62rem', letterSpacing: '0.07em', textTransform: 'uppercase', border: `1px solid ${c.border}`, padding: '0.2rem 0.5rem', color: c.muted }}>{sk}</span>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+
+  const PageProjects = () => (
+    <div ref={projectsRef} className="portfolio-scroll" style={{ height: '100%', overflowY: 'auto', padding: isMobile ? '1.5rem 1.5rem 3rem' : '3rem 3.5rem 4rem 2rem', textAlign: isMobile ? 'left' : 'right' }}>
+      <p style={{ ...meta, marginBottom: isMobile ? '1.75rem' : '3rem' }}>04 — {t('projects.title')}</p>
+      <div>
+        {projects.map((project, idx) => (
+          <div key={idx} className="project-entry" onClick={() => setSelectedProject(project)} style={{ marginBottom: '2rem' }}>
+            <motion.h2
+              initial={{ clipPath: 'inset(0 100% 0 0)' }}
+              whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+              viewport={{ once: true, root: projectsRef }}
+              transition={{ duration: 0.9, delay: idx * 0.06, ease: [0.25, 0.1, 0.25, 1] }}
+              style={{ fontSize: isMobile ? 'clamp(1.75rem, 8vw, 2.5rem)' : 'clamp(2.5rem, 6vw, 5rem)', fontWeight: 200, letterSpacing: '-0.02em', color: c.text, lineHeight: 1.05, display: 'block' }}
+            >
+              {project.title}
+            </motion.h2>
+            <div className="project-meta" style={{ marginTop: '0.35rem' }}>
+              <span style={{ ...meta }}>{project.role} &nbsp;·&nbsp; {project.tags.join(' · ')}</span>
             </div>
           </div>
-        </section>
+        ))}
+      </div>
+    </div>
+  );
 
-        {/* Experience Section */}
-        <section id="experience">
-          <SectionTitle title={t('experience.title')} icon={Briefcase} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-bold text-white">{t('experience.job1.role')}</h3>
-                  <span className="text-xs font-mono text-blue-400 bg-blue-900/20 px-2 py-1 rounded">{t('experience.job1.company')}</span>
-                </div>
-                <p className="text-neutral-400 leading-relaxed mt-2">
-                  {t('experience.job1.desc')}
-                </p>
-              </div>
-            </Card>
-            <Card>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-bold text-white">{t('experience.job2.role')}</h3>
-                  <span className="text-xs font-mono text-blue-400 bg-blue-900/20 px-2 py-1 rounded">{t('experience.job2.company')}</span>
-                </div>
-                <p className="text-neutral-400 leading-relaxed mt-2">
-                  {t('experience.job2.desc')}
-                </p>
-              </div>
-            </Card>
-          </div>
-        </section>
-
-        {/* Skills Section (formerly Tech Stack) */}
-        <section id="tech">
-          <SectionTitle title={t('skills.title')} icon={Cpu} />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="flex flex-col gap-6">
-              {/* Frontend */}
-              <Card className="h-full">
-                <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                  <Layout className="text-blue-400" size={24} />
-                  <h3 className="text-lg font-bold text-white">{t('skills.frontend')}</h3>
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-                  <TechItem name="React" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" />
-                  <TechItem name="Next.js" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" />
-                  <TechItem name="Vue.js" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" />
-                  <TechItem name="Angular" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" />
-                  <TechItem name="TypeScript" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" />
-                  <TechItem name="JavaScript" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" />
-                  <TechItem name="Tailwind" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" />
-                  <TechItem name="Bootstrap" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" />
-                  <TechItem name="Vite" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" />
-                  <TechItem name="HTML5" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" />
-                  <TechItem name="CSS3" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" />
-                  <TechItem name="Flutter" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" />
-                </div>
-              </Card>
-            </div>
-
-            {/* Right Column */}
-            <div className="flex flex-col gap-6">
-              {/* Backend */}
-              <Card>
-                <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                  <Server className="text-green-400" size={24} />
-                  <h3 className="text-lg font-bold text-white">{t('skills.backend')}</h3>
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-                  <TechItem name="Node.js" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" />
-                  <TechItem name="Python" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" />
-                  <TechItem name="Java" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" />
-                  <TechItem name="Django" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" />
-                  <TechItem name="FastAPI" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" />
-                </div>
-              </Card>
-
-              {/* Database */}
-              <Card>
-                <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                  <Database className="text-purple-400" size={24} />
-                  <h3 className="text-lg font-bold text-white">{t('skills.database')}</h3>
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-                  <TechItem name="MySQL" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" />
-                  <TechItem name="Supabase" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" />
-                  <TechItem name="Firebase" url="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" />
-                </div>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Soft Skills Section */}
-        <section id="soft-skills">
-          <SectionTitle title={t('skills.soft.title')} icon={Brain} />
-          <Card>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <SoftSkillItem icon={Check} title={t('skills.soft.org')} />
-              <SoftSkillItem icon={MessageSquare} title={t('skills.soft.com')} />
-              <SoftSkillItem icon={Puzzle} title={t('skills.soft.prob')} />
-              <SoftSkillItem icon={BookOpen} title={t('skills.soft.learn')} />
-              <SoftSkillItem icon={Users} title={t('skills.soft.team')} />
-              <SoftSkillItem icon={RefreshCw} title={t('skills.soft.adapt')} />
-              <SoftSkillItem icon={Heart} title={t('skills.soft.empathy')} />
-              <SoftSkillItem icon={Lightbulb} title={t('skills.soft.creative')} />
-            </div>
-          </Card>
-        </section>
-
-        {/* Projects Section */}
-        <section id="projects">
-          <div className="flex justify-between items-end mb-8">
-            <SectionTitle title={t('projects.title')} icon={Globe} />
-            <a href="#" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 mb-6">
-              {t('projects.viewAll')} <ArrowUpRight size={14} />
-            </a>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ scale: 1.02 }}
-                onClick={() => setSelectedProject(project)}
-                className="group relative bg-[#141414] border border-white/5 rounded-xl p-6 hover:border-blue-500/30 transition-all cursor-pointer"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-white/5 rounded-lg text-white group-hover:bg-blue-600 transition-colors">
-                    <Cpu size={20} />
-                  </div>
-                </div>
-                
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-sm text-neutral-400 mb-6 leading-relaxed">
-                  {project.shortDesc}
-                </p>
-                
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.tags.map(tag => (
-                    <span key={tag} className="text-xs font-mono text-neutral-500">#{tag}</span>
-                  ))}
-                </div>
-              </motion.div>
+  const PageContact = () => {
+    const contacts = [
+      { label: 'lucas.mezzomo@universo.univates.br', href: 'mailto:lucas.mezzomo@universo.univates.br', Icon: Mail },
+      { label: '@lmezzomo_', href: 'https://www.instagram.com/lmezzomo_/', Icon: Instagram },
+      { label: 'WhatsApp', href: 'https://wa.me/SEUNUMERO', Icon: MessageCircle },
+    ];
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', overflow: 'hidden', padding: '1.5rem', textAlign: 'center' }}>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <p style={{ ...meta, marginBottom: '2.5rem' }}>{t('nav.contact')}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', alignItems: 'center' }}>
+            {contacts.map(({ label, href, Icon }) => (
+              <a key={href} href={href} target={href.startsWith('mailto') ? '_self' : '_blank'} rel="noopener noreferrer"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', fontSize: isMobile ? '0.85rem' : 'clamp(0.9rem, 2vw, 1.4rem)', fontWeight: 200, letterSpacing: '-0.01em', color: c.text, textDecoration: 'none', opacity: 0.45, transition: `opacity 0.3s ${ease}, color 0.3s ${ease}` }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = c.accent; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '0.45'; e.currentTarget.style.color = c.text; }}>
+                <Icon size={15} strokeWidth={1.5} />
+                {label}
+              </a>
             ))}
           </div>
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="pb-20">
-          <Card className="bg-gradient-to-br from-blue-900/10 to-[#141414]">
-            <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold text-white mb-6">{t('contact.title')}</h2>
-              <p className="text-neutral-400 mb-8">
-                {t('contact.desc')}
-              </p>
-              <a href="mailto:lucas.mezzomo@universo.univates.br" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-neutral-200 transition-colors">
-                <Mail size={20} />
-                {t('contact.email')}
-              </a>
-            </div>
-          </Card>
-        </section>
-
-        <Footer />
+        </motion.div>
       </div>
+    );
+  };
+
+  const pages: Record<string, React.ReactNode> = {
+    home:       <PageHome />,
+    experience: <PageExperience />,
+    skills:     <PageSkills />,
+    projects:   <PageProjects />,
+    contact:    <PageContact />,
+  };
+
+  // ── Shared nav items renderer ─────────────────────────────────────────────────
+  const NavItems = () => (
+    <>
+      {navItems.map((item, idx) => {
+        const isActive = activePage === item.id;
+        return (
+          <div key={item.id} className="nav-item" style={{ animationDelay: `${idx * 0.1}s`, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '0.1rem' }}>
+            <span style={{ display: 'block', width: '5px', height: '5px', borderRadius: '50%', background: isActive ? c.accent : 'transparent', marginBottom: isActive ? '4px' : '0', transition: `background 0.3s ${ease}, margin 0.3s ${ease}` }} />
+            <button onClick={() => go(item.id)}
+              style={{ fontSize: '0.875rem', fontWeight: 300, color: c.text, opacity: isActive ? 1 : 0.38, ...btnBase, padding: '0.28rem 0', textAlign: 'left', transition: `opacity 0.3s ${ease}` }}
+              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '1')}
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.opacity = isActive ? '1' : '0.38')}>
+              {item.label}
+            </button>
+          </div>
+        );
+      })}
+    </>
+  );
+
+  const NavBottom = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ borderTop: `1px solid ${c.border}`, paddingTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+        <button onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')}
+          style={{ ...meta, ...btnBase, textAlign: 'left', opacity: 0.4 }}
+          onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '1')}
+          onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '0.4')}>
+          {language === 'pt' ? 'PT → EN' : 'EN → PT'}
+        </button>
+        <button onClick={toggleTheme}
+          style={{ ...meta, ...btnBase, textAlign: 'left', opacity: 0.4 }}
+          onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '1')}
+          onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '0.4')}>
+          {isDark ? 'Light mode' : 'Dark mode'}
+        </button>
+      </div>
+      <div style={{ display: 'flex', gap: '0.85rem' }}>
+        {[
+          { href: 'https://github.com/mezzomolucas', Icon: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.8 1.3 3.48.99.1-.77.41-1.3.75-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.53-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg> },
+          { href: 'https://www.linkedin.com/in/mezzomolucas/', Icon: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg> },
+          { href: 'https://www.instagram.com/lmezzomo_/', Icon: (p: any) => <svg {...p} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85 0 3.2-.01 3.58-.07 4.85-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07-3.2 0-3.58-.01-4.85-.07-3.26-.15-4.77-1.7-4.92-4.92C2.17 15.58 2.16 15.2 2.16 12c0-3.2.01-3.58.07-4.85C2.38 3.86 3.9 2.31 7.15 2.23 8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 2.7.27.27 2.7.07 7.05.01 8.33 0 8.74 0 12c0 3.26.01 3.67.07 4.95.2 4.36 2.62 6.78 6.98 6.98C8.33 23.99 8.74 24 12 24c3.26 0 3.67-.01 4.95-.07 4.35-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95 0-3.26-.01-3.67-.07-4.95C23.73 2.71 21.31.27 16.95.07 15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32A6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg> },
+        ].map(({ href, Icon }) => (
+          <a key={href} href={href} target="_blank" rel="noopener noreferrer"
+            style={{ color: c.text, opacity: 0.25, display: 'flex', alignItems: 'center', transition: `opacity 0.3s ${ease}` }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = '0.25')}>
+            <Icon width={13} height={13} />
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────────
+  const fi = isMobile ? '8px' : '18px'; // frame inset
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: c.bg, ...cssVars }}>
+
+      <RingBackground isDark={isDark} />
+      <GrainOverlay />
+
+      {/* Border frame */}
+      <div aria-hidden="true" style={{ position: 'fixed', inset: fi, border: `1px solid ${c.border}`, pointerEvents: 'none', zIndex: 9999 }} />
+
+      {/* Modal */}
+      <AnimatePresence>
+        {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} isDark={isDark} />}
+      </AnimatePresence>
+
+      {/* ── DESKTOP layout ── */}
+      {!isMobile && (
+        <>
+          {/* DARK / LIGHT vertical labels */}
+          <div style={{ position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: 200, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '28px 0', pointerEvents: 'none' }}>
+            {(['DARK', 'LIGHT'] as const).map(lbl => (
+              <button key={lbl} onClick={toggleTheme} style={{
+                writingMode: 'vertical-rl', transform: 'rotate(180deg)',
+                fontSize: '0.58rem', letterSpacing: '0.18em', color: c.text,
+                opacity: (lbl === 'DARK') === isDark ? 0.7 : 0.22,
+                background: 'none', border: 'none', cursor: 'pointer', padding: '0 13px', pointerEvents: 'auto',
+                transition: `opacity 0.3s ${ease}`,
+              }}>{lbl}</button>
+            ))}
+          </div>
+
+          {/* Desktop content: nav + page */}
+          <div style={{ position: 'fixed', inset: fi, display: 'flex', zIndex: 10, overflow: 'hidden' }}>
+            {/* Left nav */}
+            <nav style={{ width: '190px', flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '2.25rem 1.75rem 2.25rem 2.25rem', borderRight: `1px solid ${c.border}` }}>
+              <button onClick={() => navigate('/')}
+                style={{ ...meta, ...btnBase, textAlign: 'left', marginBottom: '2.25rem', opacity: 0.5 }}
+                onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '1')}
+                onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '0.5')}>
+                ← back
+              </button>
+              <div style={{ marginBottom: '2.75rem' }}>
+                <p style={{ fontSize: '0.875rem', fontWeight: 300, color: c.text, letterSpacing: '-0.01em' }}>Lucas Mezzomo</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3em', marginTop: '0.25rem' }}>
+                  <span style={{ ...meta }}>Dev.</span>
+                  <span style={{ ...meta, color: c.accent }}>
+                    <TextType text={roles} typingSpeed={60} deletingSpeed={35} pauseDuration={2200} initialDelay={800} showCursor cursorCharacter="_" textColors={[c.accent]} />
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
+                <NavItems />
+              </div>
+              <NavBottom />
+            </nav>
+
+            {/* Page content */}
+            <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+              <AnimatePresence mode="wait">
+                <motion.div key={activePage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }} style={{ position: 'absolute', inset: 0 }}>
+                  {pages[activePage]}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── MOBILE layout ── */}
+      {isMobile && (
+        <>
+          {/* Mobile top bar */}
+          <div style={{ position: 'fixed', top: fi, left: fi, right: fi, height: '44px', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${c.border}`, padding: '0 1.1rem' }}>
+            <button onClick={() => navigate('/')} style={{ ...meta, ...btnBase, opacity: 0.55 }}>← back</button>
+            <span style={{ fontSize: '0.75rem', fontWeight: 300, color: c.text, letterSpacing: '-0.01em' }}>Lucas Mezzomo</span>
+            <button onClick={() => setMenuOpen(m => !m)} style={{ color: c.text, ...btnBase, opacity: 0.7, display: 'flex', alignItems: 'center' }}>
+              {menuOpen ? <X size={16} strokeWidth={1.5} /> : <Menu size={16} strokeWidth={1.5} />}
+            </button>
+          </div>
+
+          {/* Mobile nav overlay */}
+          <AnimatePresence>
+            {menuOpen && (
+              <>
+                {/* Backdrop */}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  onClick={() => setMenuOpen(false)}
+                  style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 30 }} />
+                {/* Drawer */}
+                <motion.div
+                  initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
+                  transition={{ ease: [0.25, 0.1, 0.25, 1], duration: 0.3 }}
+                  style={{ position: 'fixed', top: `calc(${fi} + 44px)`, left: fi, bottom: fi, width: '220px', zIndex: 40, background: c.bg, borderRight: `1px solid ${c.border}`, padding: '1.75rem 1.5rem', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+                    <NavItems />
+                  </div>
+                  <NavBottom />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Mobile content area */}
+          <div style={{ position: 'fixed', top: `calc(${fi} + 44px)`, left: fi, right: fi, bottom: fi, zIndex: 10, overflow: 'hidden' }}>
+            <AnimatePresence mode="wait">
+              <motion.div key={activePage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }} style={{ position: 'absolute', inset: 0 }}>
+                {pages[activePage]}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </>
+      )}
     </div>
   );
 };
 
+// ─── Footer ───────────────────────────────────────────────────────────────────
+
 const Footer = () => {
   const { t } = useLanguage();
   return (
-    <footer className="py-8 border-t border-white/5 mt-10 flex flex-col items-center gap-4">
-      <div className="flex gap-6">
-        <a href="https://www.linkedin.com/in/mezzomolucas/" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-blue-500 transition-colors">
-          <Linkedin size={20} />
-        </a>
-        <a href="https://github.com/mezzomolucas" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-          <Github size={20} />
-        </a>
-        <a href="https://www.instagram.com/lmezzomo_/" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-pink-500 transition-colors">
-          <Instagram size={20} />
-        </a>
-      </div>
-      <p className="text-neutral-600 text-sm font-mono">
-        © {new Date().getFullYear()} Lucas Mezzomo. {t('footer.rights')}
-      </p>
+    <footer className="py-8 border-t border-white/5 flex flex-col items-center gap-4">
+      <p className="text-white/15 text-xs font-mono">© {new Date().getFullYear()} Lucas Mezzomo. {t('footer.rights')}</p>
     </footer>
   );
 };
 
-export { Navbar, Hero, PortfolioPage, Footer };
+export { Hero, PortfolioPage, Footer };
