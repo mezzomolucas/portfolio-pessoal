@@ -157,7 +157,7 @@ const translations: Record<string, Record<Language, string>> = {
     es: '¿Tienes una idea o un negocio que necesita un sitio web profesional? Hablemos y llevemos tu proyecto al mundo.',
   },
   'contact.email':  { pt: 'Enviar Email', en: 'Send Email', es: 'Enviar Email' },
-  'contact.copied': { pt: 'Copiado! aguardo seu email.', en: 'Copied! looking forward to your email.', es: '¡Copiado! espero tu email.' },
+  'contact.copied': { pt: 'Endereço de email copiado, fico no aguardo!', en: 'Email address copied, looking forward to it!', es: '¡Dirección de email copiada, quedo a la espera!' },
 
   // Modal labels
   'modal.challenge':   { pt: 'O Desafio',   en: 'The Challenge', es: 'El Desafío'  },

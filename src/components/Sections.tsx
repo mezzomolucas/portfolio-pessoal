@@ -275,7 +275,7 @@ const PortfolioPage = () => {
 
   const navItems = [
     { id: 'home',         label: 'Home' },
-    { id: 'experience',   label: t('experience.title') },
+    // { id: 'experience', label: t('experience.title') }, // desativado por enquanto, religar quando precisar
     { id: 'skills',       label: t('nav.tech') },
     { id: 'projects',     label: t('nav.projects') },
     { id: 'certificates', label: t('nav.certificates') },
@@ -284,9 +284,9 @@ const PortfolioPage = () => {
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('lucas.mezzomo@universo.univates.br');
+    navigator.clipboard.writeText('lucas@mezzomo.dev');
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 2500);
   };
 
   const go = (id: string) => { setActivePage(id); setMenuOpen(false); };
@@ -301,8 +301,8 @@ const PortfolioPage = () => {
     /* ── Mobile home: photo top, text below ── */
     <div style={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}
-        style={{ position: 'relative', height: '38%', flexShrink: 0, overflow: 'hidden' }}>
-        <img src={fotoLucas} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', filter: isDark ? 'grayscale(100%) brightness(0.38) contrast(1.1)' : 'grayscale(40%) brightness(0.8)' }} />
+        style={{ position: 'relative', height: '52%', flexShrink: 0, overflow: 'hidden' }}>
+        <img src={fotoLucas} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', display: 'block', filter: isDark ? 'grayscale(100%) brightness(0.38) contrast(1.1)' : 'grayscale(40%) brightness(0.8)' }} />
         <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, ${c.bg} 0%, transparent 22%, transparent 60%, ${c.bg} 100%)` }} />
       </motion.div>
       <div style={{ flex: 1, padding: '0.75rem 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
@@ -336,7 +336,7 @@ const PortfolioPage = () => {
             Lucas<br />Mezzomo
           </h1>
           <p style={{ ...meta, marginBottom: '1.75rem' }}>
-            Desenvolvedor <span style={{ color: c.accent }}>web</span> &nbsp;·&nbsp; Lajeado, RS
+            Desenvolvedor <span style={{ color: c.accent }}>web</span> &nbsp;·&nbsp; Encantado, RS
           </p>
           <div style={{ maxWidth: '38ch', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginLeft: 'auto' }}>
             <p style={{ fontSize: '0.8rem', fontWeight: 300, color: c.muted, lineHeight: 1.8 }}>{t('about.desc1')}</p>
@@ -346,7 +346,7 @@ const PortfolioPage = () => {
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', marginTop: '1.6rem', fontSize: '0.65rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: c.muted, background: 'none', border: `1px solid ${c.border}`, padding: '0.38rem 0.75rem', cursor: 'pointer', transition: `border-color 0.3s ${ease}, color 0.3s ${ease}` }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = c.text; e.currentTarget.style.color = c.text; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted; }}>
-            <Mail size={10} /> lucas.mezzomo@universo.univates.br {copied ? <Check size={10} /> : <Copy size={10} />}
+            <Mail size={10} /> lucas@mezzomo.dev {copied ? <Check size={10} /> : <Copy size={10} />}
           </button>
         </motion.div>
       </div>
@@ -437,11 +437,11 @@ const PortfolioPage = () => {
               onMouseLeave={e => (e.currentTarget.style.borderColor = c.border)}
             >
               {/* PDF preview */}
-              <div style={{ position: 'relative', height: '200px', overflow: 'hidden', background: isDark ? '#0d0d0d' : '#e8e3d8' }}>
+              <div style={{ position: 'relative', aspectRatio: '1 / 1.414', overflow: 'hidden', background: isDark ? '#0d0d0d' : '#e8e3d8' }}>
                 <iframe
                   src={`${cert.file}#toolbar=0&navpanes=0&scrollbar=0`}
                   title={cert.title}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '400px', border: 'none', pointerEvents: 'none' }}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
                 />
                 <div style={{ position: 'absolute', inset: 0 }} />
               </div>
@@ -459,9 +459,8 @@ const PortfolioPage = () => {
 
   const PageContact = () => {
     const contacts = [
-      { label: 'lucas.mezzomo@universo.univates.br', href: 'mailto:lucas.mezzomo@universo.univates.br', Icon: Mail },
       { label: '@lmezzomo_', href: 'https://www.instagram.com/lmezzomo_/', Icon: Instagram },
-      { label: 'WhatsApp', href: 'https://wa.me/SEUNUMERO', Icon: MessageCircle },
+      { label: 'WhatsApp', href: 'https://wa.me/5551989247439', Icon: MessageCircle },
     ];
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', overflow: 'hidden', padding: '1.5rem', textAlign: 'center' }}>
@@ -475,17 +474,16 @@ const PortfolioPage = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', alignItems: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem' }}>
               <p style={{ ...meta }}>{t('nav.contact')}</p>
-              {(() => { const { href, label, Icon: EmailIcon } = contacts[0]; return (
-                <a href={href} target="_self" rel="noopener noreferrer"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', fontSize: isMobile ? '0.85rem' : 'clamp(0.9rem, 2vw, 1.4rem)', fontWeight: 200, letterSpacing: '-0.01em', color: c.text, textDecoration: 'none', opacity: 0.45, transition: `opacity 0.3s ${ease}, color 0.3s ${ease}` }}
-                  onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = c.accent; }}
-                  onMouseLeave={e => { e.currentTarget.style.opacity = '0.45'; e.currentTarget.style.color = c.text; }}>
-                  <EmailIcon size={15} strokeWidth={1.5} />
-                  {label}
-                </a>
-              ); })()}
+              <button onClick={handleCopyEmail}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', fontSize: isMobile ? '0.85rem' : 'clamp(0.9rem, 2vw, 1.4rem)', fontWeight: 200, letterSpacing: '-0.01em', color: c.text, background: 'none', border: 'none', cursor: 'pointer', padding: 0, opacity: 0.45, transition: `opacity 0.3s ${ease}, color 0.3s ${ease}` }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = c.accent; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '0.45'; e.currentTarget.style.color = c.text; }}>
+                <Mail size={15} strokeWidth={1.5} />
+                lucas@mezzomo.dev
+                {copied ? <Check size={13} /> : <Copy size={13} />}
+              </button>
             </div>
-            {contacts.slice(1).map(({ label, href, Icon }) => (
+            {contacts.map(({ label, href, Icon }) => (
               <a key={href} href={href} target="_blank" rel="noopener noreferrer"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', fontSize: isMobile ? '0.85rem' : 'clamp(0.9rem, 2vw, 1.4rem)', fontWeight: 200, letterSpacing: '-0.01em', color: c.text, textDecoration: 'none', opacity: 0.45, transition: `opacity 0.3s ${ease}, color 0.3s ${ease}` }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = c.accent; }}
@@ -539,12 +537,6 @@ const PortfolioPage = () => {
           onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '1')}
           onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '0.4')}>
           {language === 'pt' ? 'PT → EN' : language === 'en' ? 'EN → ES' : 'ES → PT'}
-        </button>
-        <button onClick={toggleTheme}
-          style={{ ...meta, ...btnBase, textAlign: 'left', opacity: 0.4 }}
-          onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '1')}
-          onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.opacity = '0.4')}>
-          {isDark ? 'Light mode' : 'Dark mode'}
         </button>
       </div>
       <div style={{ display: 'flex', gap: '0.85rem' }}>
