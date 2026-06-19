@@ -263,6 +263,12 @@ const PortfolioPage = () => {
       highlights: [t('project4.highlight1'), t('project4.highlight2'), t('project4.highlight3')],
       tags: ['Next.js', 'React', 'TypeScript', 'Tailwind'], link: 'https://marta-goncalves-website.vercel.app/',
     },
+    {
+      title: 'Ana Rodrigues Fisio', shortDesc: t('project5.desc'), role: 'Frontend Developer',
+      challenge: t('project5.challenge'), solution: t('project5.solution'),
+      highlights: [t('project5.highlight1'), t('project5.highlight2'), t('project5.highlight3'), t('project5.highlight4')],
+      tags: ['React', 'TypeScript', 'Tailwind', 'Demo'], link: 'https://ana-rodrigues-fisio.vercel.app/',
+    },
   ];
 
   const allTechs   = ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind', 'Bootstrap', 'Vite', 'HTML5', 'CSS3', 'Flutter', 'Node.js', 'Python', 'Java', 'MySQL', 'Supabase', 'Firebase'];

@@ -149,6 +149,23 @@ const translations: Record<string, Record<Language, string>> = {
   'project4.highlight2': { pt: 'Suporte a dois idiomas (Português e Inglês) para alcance ampliado.', en: 'Bilingual support (Portuguese and English) for broader reach.', es: 'Soporte en dos idiomas (Portugués e Inglés) para mayor alcance.' },
   'project4.highlight3': { pt: 'Integração com múltiplos canais de contato: WhatsApp, email e telefone.', en: 'Integration with multiple contact channels: WhatsApp, email, and phone.', es: 'Integración con múltiples canales de contacto: WhatsApp, email y teléfono.' },
 
+  // Project 5 — Ana Rodrigues Fisio (Demo)
+  'project5.desc': { pt: 'Projeto de demonstração: site institucional para uma clínica de fisioterapia, criado para mostrar como a presença digital pode reforçar a confiança e atrair novos pacientes.', en: 'Demo project: institutional website for a physiotherapy clinic, built to showcase how a digital presence can build trust and attract new patients.', es: 'Proyecto de demostración: sitio institucional para una clínica de fisioterapia, creado para mostrar cómo la presencia digital puede reforzar la confianza y atraer nuevos pacientes.' },
+  'project5.challenge': {
+    pt: 'Como projeto demo, o desafio foi criar do zero uma identidade visual e uma estrutura de conteúdo coerentes para uma clínica de fisioterapia fictícia, simulando as necessidades reais de um negócio da área da saúde: transmitir credibilidade, apresentar especialidades e facilitar o contato com pacientes.',
+    en: 'As a demo project, the challenge was to build from scratch a coherent visual identity and content structure for a fictional physiotherapy clinic, simulating the real needs of a healthcare business: conveying credibility, presenting specialties, and making it easy for patients to get in touch.',
+    es: 'Como proyecto demo, el desafío fue crear desde cero una identidad visual y una estructura de contenido coherentes para una clínica de fisioterapia ficticia, simulando las necesidades reales de un negocio del área de la salud: transmitir credibilidad, presentar especialidades y facilitar el contacto con los pacientes.',
+  },
+  'project5.solution': {
+    pt: 'Desenvolvido com React e Tailwind CSS, o site reúne seções de especialidades, sobre a profissional e contato, com um design clean e acolhedor pensado para transmitir confiança ao paciente. Por ser um projeto demo, serviu também como vitrine para validar componentes e padrões visuais reutilizáveis em entregas reais para clientes do setor de saúde e bem-estar.',
+    en: 'Built with React and Tailwind CSS, the site brings together specialty, about, and contact sections with a clean, welcoming design meant to convey trust to patients. As a demo project, it also served as a showcase to validate reusable components and visual patterns for real client deliveries in the health and wellness sector.',
+    es: 'Desarrollado con React y Tailwind CSS, el sitio reúne secciones de especialidades, sobre la profesional y contacto, con un diseño limpio y acogedor pensado para transmitir confianza al paciente. Al ser un proyecto demo, también sirvió como vitrina para validar componentes y patrones visuales reutilizables en entregas reales para clientes del sector de salud y bienestar.',
+  },
+  'project5.highlight1': { pt: 'Projeto demo: criado para demonstrar o processo de construção de um site institucional do zero.', en: 'Demo project: built to showcase the end-to-end process of creating an institutional website from scratch.', es: 'Proyecto demo: creado para demostrar el proceso de construcción de un sitio institucional desde cero.' },
+  'project5.highlight2': { pt: 'Design clean e acolhedor, com foco em transmitir confiança e profissionalismo.', en: 'Clean, welcoming design focused on conveying trust and professionalism.', es: 'Diseño limpio y acogedor, enfocado en transmitir confianza y profesionalismo.' },
+  'project5.highlight3': { pt: 'Estrutura de seções (especialidades, sobre, contato) pensada para conversão de visitantes em pacientes.', en: 'Section structure (specialties, about, contact) designed to convert visitors into patients.', es: 'Estructura de secciones (especialidades, sobre, contacto) pensada para convertir visitantes en pacientes.' },
+  'project5.highlight4': { pt: 'Layout responsivo, otimizado para acesso via mobile e desktop.', en: 'Responsive layout, optimized for mobile and desktop access.', es: 'Diseño responsivo, optimizado para acceso vía móvil y escritorio.' },
+
   // Contact
   'contact.title': { pt: 'Vamos construir algo incrível?', en: 'Let\'s build something amazing?', es: '¿Construimos algo increíble?' },
   'contact.desc':  {
