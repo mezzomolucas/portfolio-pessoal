@@ -427,28 +427,28 @@ const PortfolioPage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '1.5rem 1.5rem 3rem' : '3rem 3.5rem 3rem 2rem', overflow: 'auto', textAlign: isMobile ? 'left' : 'right' }}>
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}>
         <p style={{ ...meta, marginBottom: isMobile ? '1.75rem' : '2.5rem' }}>05 — {t('nav.certificates')}</p>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, 250px)', justifyContent: isMobile ? undefined : 'flex-end', gap: isMobile ? '1rem' : '1.25rem' }}>
           {certs.map(cert => (
             <div
               key={cert.file}
               onClick={() => setSelectedCert(cert)}
-              style={{ border: `1px solid ${c.border}`, cursor: 'pointer', transition: `border-color 0.25s`, background: c.bg }}
+              style={{ width: isMobile ? '100%' : undefined, border: `1px solid ${c.border}`, cursor: 'pointer', transition: `border-color 0.25s`, background: c.bg }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = c.accent)}
               onMouseLeave={e => (e.currentTarget.style.borderColor = c.border)}
             >
               {/* PDF preview */}
-              <div style={{ position: 'relative', aspectRatio: '1 / 1.414', overflow: 'hidden', background: isDark ? '#0d0d0d' : '#e8e3d8' }}>
+              <div style={{ position: 'relative', aspectRatio: isMobile ? '1 / 1' : '2.1 / 1', overflow: 'hidden', background: isDark ? '#0d0d0d' : '#e8e3d8' }}>
                 <iframe
                   src={`${cert.file}#toolbar=0&navpanes=0&scrollbar=0`}
                   title={cert.title}
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
+                  style={{ position: 'absolute', top: isMobile ? '-12%' : 0, left: 0, width: '100%', height: isMobile ? '124%' : '300%', border: 'none', pointerEvents: 'none' }}
                 />
                 <div style={{ position: 'absolute', inset: 0 }} />
               </div>
               {/* Card footer */}
-              <div style={{ padding: '0.85rem 1rem', borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <p style={{ ...meta }}>{cert.title}</p>
-                <span style={{ ...meta, color: c.accent }}>{t('cert.open')} →</span>
+              <div style={{ padding: isMobile ? '0.6rem 0.7rem' : '0.85rem 1rem', borderTop: `1px solid ${c.border}`, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: isMobile ? undefined : 'space-between', alignItems: isMobile ? undefined : 'center', gap: '0.3rem' }}>
+                <p style={{ ...meta, fontSize: isMobile ? '0.6rem' : '0.68rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{cert.title}</p>
+                <span style={{ ...meta, fontSize: isMobile ? '0.6rem' : '0.68rem', color: c.accent }}>{t('cert.open')} →</span>
               </div>
             </div>
           ))}
