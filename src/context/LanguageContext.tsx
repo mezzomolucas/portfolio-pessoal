@@ -166,6 +166,22 @@ const translations: Record<string, Record<Language, string>> = {
   'project5.highlight3': { pt: 'Estrutura de seções (especialidades, sobre, contato) pensada para conversão de visitantes em pacientes.', en: 'Section structure (specialties, about, contact) designed to convert visitors into patients.', es: 'Estructura de secciones (especialidades, sobre, contacto) pensada para convertir visitantes en pacientes.' },
   'project5.highlight4': { pt: 'Layout responsivo, otimizado para acesso via mobile e desktop.', en: 'Responsive layout, optimized for mobile and desktop access.', es: 'Diseño responsivo, optimizado para acceso vía móvil y escritorio.' },
 
+  // Project 6 — Hengu Hotel
+  'project6.desc': { pt: 'Site institucional para o Hengu Hotel, em Encantado (RS), apresentando a estrutura e facilitando reservas via WhatsApp.', en: 'Institutional website for Hengu Hotel, in Encantado (RS), showcasing the property and making WhatsApp reservations easy.', es: 'Sitio institucional para el Hengu Hotel, en Encantado (RS), que presenta la estructura y facilita las reservas vía WhatsApp.' },
+  'project6.challenge': {
+    pt: 'O hotel precisava de uma presença digital que transmitisse conforto e confiança, destacando sua localização estratégica no Vale do Taquari e simplificando o processo de reserva para os hóspedes.',
+    en: 'The hotel needed a digital presence that conveyed comfort and trust, highlighting its strategic location in the Vale do Taquari region and simplifying the booking process for guests.',
+    es: 'El hotel necesitaba una presencia digital que transmitiera comodidad y confianza, destacando su ubicación estratégica en el Vale do Taquari y simplificando el proceso de reserva para los huéspedes.',
+  },
+  'project6.solution': {
+    pt: 'Desenvolvido com React, TypeScript e Tailwind CSS, o site apresenta a estrutura do hotel, sua localização e diferenciais, com botão de reserva direto pelo WhatsApp e otimização para SEO local.',
+    en: 'Built with React, TypeScript, and Tailwind CSS, the site presents the hotel\'s facilities, location, and highlights, with a direct WhatsApp booking button and local SEO optimization.',
+    es: 'Desarrollado con React, TypeScript y Tailwind CSS, el sitio presenta la estructura del hotel, su ubicación y diferenciales, con un botón de reserva directo por WhatsApp y optimización para SEO local.',
+  },
+  'project6.highlight1': { pt: 'Reserva facilitada via WhatsApp, direto da página inicial.', en: 'Easy booking via WhatsApp, right from the homepage.', es: 'Reserva facilitada vía WhatsApp, directo desde la página de inicio.' },
+  'project6.highlight2': { pt: 'SEO local otimizado, destacando a localização em Encantado (RS).', en: 'Optimized local SEO, highlighting the location in Encantado (RS).', es: 'SEO local optimizado, destacando la ubicación en Encantado (RS).' },
+  'project6.highlight3': { pt: 'Layout responsivo, com identidade visual acolhedora e profissional.', en: 'Responsive layout with a welcoming, professional visual identity.', es: 'Diseño responsivo, con identidad visual acogedora y profesional.' },
+
   // Contact
   'contact.title': { pt: 'Vamos construir algo incrível?', en: 'Let\'s build something amazing?', es: '¿Construimos algo increíble?' },
   'contact.desc':  {
