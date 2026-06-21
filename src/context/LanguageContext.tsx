@@ -182,6 +182,23 @@ const translations: Record<string, Record<Language, string>> = {
   'project6.highlight2': { pt: 'SEO local otimizado, destacando a localização em Encantado (RS).', en: 'Optimized local SEO, highlighting the location in Encantado (RS).', es: 'SEO local optimizado, destacando la ubicación en Encantado (RS).' },
   'project6.highlight3': { pt: 'Layout responsivo, com identidade visual acolhedora e profissional.', en: 'Responsive layout with a welcoming, professional visual identity.', es: 'Diseño responsivo, con identidad visual acogedora y profesional.' },
 
+  // Project 7 — Estúdio Vasco
+  'project7.desc': { pt: 'SaaS completo de agendamento para barbearias, com site institucional e sistema de gestão com três níveis de permissão.', en: 'Full SaaS scheduling system for barbershops, with an institutional site and a management system with three permission levels.', es: 'SaaS completo de agendamiento para barberías, con sitio institucional y sistema de gestión con tres niveles de permiso.' },
+  'project7.challenge': {
+    pt: 'Construir, em um único projeto demo, uma aplicação full-stack real — não uma landing page — com modelagem de dados multi-papel, prevenção de conflito de agenda e autenticação completa, sem abrir mão de uma direção visual autoral.',
+    en: 'Build, in a single demo project, a real full-stack application — not a landing page — with multi-role data modeling, scheduling conflict prevention, and complete authentication, without giving up a distinctive visual direction.',
+    es: 'Construir, en un único proyecto demo, una aplicación full-stack real — no una landing page — con modelado de datos multi-rol, prevención de conflicto de agenda y autenticación completa, sin renunciar a una dirección visual propia.',
+  },
+  'project7.solution': {
+    pt: 'Desenvolvido com Next.js, TypeScript, Tailwind CSS e Supabase (Postgres + Auth + Row Level Security), o sistema cobre cliente, barbeiro e dono em painéis distintos, com cálculo automático de horários disponíveis e identidade visual streetwear reforçada por scroll horizontal autoral e shader WebGL via Three.js.',
+    en: 'Built with Next.js, TypeScript, Tailwind CSS, and Supabase (Postgres + Auth + Row Level Security), the system covers client, barber, and owner in distinct dashboards, with automatic available-slot calculation and a streetwear visual identity reinforced by a custom horizontal scroll and a WebGL shader via Three.js.',
+    es: 'Desarrollado con Next.js, TypeScript, Tailwind CSS y Supabase (Postgres + Auth + Row Level Security), el sistema cubre cliente, barbero y dueño en paneles distintos, con cálculo automático de horarios disponibles e identidad visual streetwear reforzada por scroll horizontal propio y shader WebGL vía Three.js.',
+  },
+  'project7.highlight1': { pt: 'Três painéis (cliente, barbeiro, dono) com regras de negócio reais, incluindo prevenção automática de conflito de horário.', en: 'Three dashboards (client, barber, owner) with real business logic, including automatic scheduling conflict prevention.', es: 'Tres paneles (cliente, barbero, dueño) con reglas de negocio reales, incluyendo prevención automática de conflicto de horario.' },
+  'project7.highlight2': { pt: 'Row Level Security em todas as tabelas do banco, garantindo permissões no nível de dados, não só na interface.', en: 'Row Level Security on every database table, enforcing permissions at the data layer, not just in the UI.', es: 'Row Level Security en todas las tablas del banco, garantizando permisos a nivel de datos, no solo en la interfaz.' },
+  'project7.highlight3': { pt: 'Autenticação completa via Supabase Auth (e-mail/senha e Google), com convite de barbeiros por e-mail.', en: 'Complete authentication via Supabase Auth (email/password and Google), with barber invites by email.', es: 'Autenticación completa vía Supabase Auth (correo/contraseña y Google), con invitación de barberos por correo.' },
+  'project7.highlight4': { pt: 'Scroll horizontal autoral no desktop com fundo em shader WebGL (Three.js), adaptado para vertical no mobile.', en: 'Custom horizontal scroll on desktop with a WebGL shader background (Three.js), adapted to vertical on mobile.', es: 'Scroll horizontal propio en escritorio con fondo en shader WebGL (Three.js), adaptado a vertical en móvil.' },
+
   // Contact
   'contact.title': { pt: 'Vamos construir algo incrível?', en: 'Let\'s build something amazing?', es: '¿Construimos algo increíble?' },
   'contact.desc':  {

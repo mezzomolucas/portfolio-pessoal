@@ -275,6 +275,12 @@ const PortfolioPage = () => {
       highlights: [t('project6.highlight1'), t('project6.highlight2'), t('project6.highlight3')],
       tags: ['React', 'TypeScript', 'Tailwind'], link: 'https://hengu.vercel.app/',
     },
+    {
+      title: 'Estúdio Vasco', shortDesc: t('project7.desc'), role: 'Full Stack Developer',
+      challenge: t('project7.challenge'), solution: t('project7.solution'),
+      highlights: [t('project7.highlight1'), t('project7.highlight2'), t('project7.highlight3'), t('project7.highlight4')],
+      tags: ['Next.js', 'TypeScript', 'Tailwind', 'Supabase', 'Three.js', 'Demo'], link: 'https://estudio-vasco.vercel.app/',
+    },
   ];
 
   const allTechs   = ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind', 'Bootstrap', 'Vite', 'HTML5', 'CSS3', 'Flutter', 'Node.js', 'Python', 'Java', 'MySQL', 'Supabase', 'Firebase'];
