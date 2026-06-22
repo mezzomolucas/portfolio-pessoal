@@ -278,7 +278,7 @@ const PortfolioPage = () => {
     {
       title: 'Estúdio Vasco', shortDesc: t('project7.desc'), role: 'Full Stack Developer',
       challenge: t('project7.challenge'), solution: t('project7.solution'),
-      highlights: [t('project7.highlight1'), t('project7.highlight2'), t('project7.highlight3'), t('project7.highlight4')],
+      highlights: [t('project7.highlight1'), t('project7.highlight2'), t('project7.highlight3'), t('project7.highlight4'), t('project7.highlight5')],
       tags: ['Next.js', 'TypeScript', 'Tailwind', 'Supabase', 'Three.js', 'Demo'], link: 'https://estudio-vasco.vercel.app/',
     },
   ];
