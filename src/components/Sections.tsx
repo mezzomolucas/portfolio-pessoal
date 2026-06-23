@@ -442,10 +442,10 @@ const PortfolioPage = () => {
   );
 
   const PageCertificates = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '1.5rem 1.5rem 3rem' : '3rem 3.5rem 3rem 2rem', overflow: 'auto', textAlign: isMobile ? 'left' : 'right' }}>
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}>
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: isMobile ? 'flex-start' : 'flex-end', height: '100%', padding: isMobile ? '1.5rem 1.5rem 3rem' : '3rem 3.5rem 3rem 2rem', overflow: 'auto', textAlign: isMobile ? 'left' : 'right' }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }} style={{ width: '100%' }}>
         <p style={{ ...meta, marginBottom: isMobile ? '1.75rem' : '2.5rem' }}>05 — {t('nav.certificates')}</p>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, 250px)', justifyContent: isMobile ? undefined : 'flex-end', gap: isMobile ? '1rem' : '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, 250px)', justifyContent: isMobile ? undefined : 'flex-end', gap: isMobile ? '1rem' : '1.25rem' }}>
           {certs.map(cert => (
             <div
               key={cert.file}
